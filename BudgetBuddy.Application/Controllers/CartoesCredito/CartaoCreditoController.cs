@@ -1,18 +1,18 @@
-﻿using BackendSistemaFinanceiro.Database;
-using BackendSistemaFinanceiro.Entidades.CartoesCredito;
-using BackendSistemaFinanceiro.ViewModels.CartoesCredito;
+﻿using BudgetBuddy.Application.ViewModels.CartoesCredito;
+using BudgetBuddy.Domain.Entities.CreditCards;
+using BudgetBuddy.Infra.Data.Context;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace BackendSistemaFinanceiro.Controllers.CartoesCredito
+namespace BudgetBuddy.Application.Controllers.CartoesCredito
 {
     [ApiController]
     [Route("cartoes")]
     public class CartaoCreditoController : Controller
     {
-        private readonly SistemaFinanceiroContext _contexto;
+        private readonly BudgetBuddyContext _contexto;
 
-        public CartaoCreditoController(SistemaFinanceiroContext contexto)
+        public CartaoCreditoController(BudgetBuddyContext contexto)
         {
             _contexto = contexto;
         }

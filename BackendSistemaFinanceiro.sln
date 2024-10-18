@@ -3,7 +3,23 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35222.181
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackendSistemaFinanceiro", "BackendSistemaFinanceiro\BackendSistemaFinanceiro.csproj", "{B3425820-724A-4142-AD55-66A52983F9D4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BackendSistemaFinanceiro", "BackendSistemaFinanceiro\BackendSistemaFinanceiro.csproj", "{B3425820-724A-4142-AD55-66A52983F9D4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1 - Application", "1 - Application", "{C689FFEB-69A4-4999-8EE6-90073903FE9F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2 - Domain", "2 - Domain", "{1E6FEC6A-C86F-4E90-BE98-6A6B5AD3B3FD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3 - Service", "3 - Service", "{7340DA6F-F2DE-42A7-8DDD-7E0529C41963}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4 - Infra", "4 - Infra", "{FA331419-3D95-4584-8ECA-0933C779AD6C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BudgetBuddy.Application", "BudgetBuddy.Application\BudgetBuddy.Application.csproj", "{D100AF35-E6A1-4EB4-951C-0C6C153E7528}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BudgetBuddy.Domain", "BudgetBuddy.Domain\BudgetBuddy.Domain.csproj", "{59A9137F-A362-4BF2-A456-E3BC5E7B4D5A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BudgetBuddy.Service", "BudgetBuddy.Service\BudgetBuddy.Service.csproj", "{FF9628AB-1BCB-4C32-87CD-6309CB75A984}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BudgetBuddy.Infra.Data", "BudgetBuddy.Infra.Data\BudgetBuddy.Infra.Data.csproj", "{28972C30-8870-4F7D-8364-2E3C3BE530DB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,9 +31,31 @@ Global
 		{B3425820-724A-4142-AD55-66A52983F9D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B3425820-724A-4142-AD55-66A52983F9D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B3425820-724A-4142-AD55-66A52983F9D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D100AF35-E6A1-4EB4-951C-0C6C153E7528}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D100AF35-E6A1-4EB4-951C-0C6C153E7528}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D100AF35-E6A1-4EB4-951C-0C6C153E7528}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D100AF35-E6A1-4EB4-951C-0C6C153E7528}.Release|Any CPU.Build.0 = Release|Any CPU
+		{59A9137F-A362-4BF2-A456-E3BC5E7B4D5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59A9137F-A362-4BF2-A456-E3BC5E7B4D5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59A9137F-A362-4BF2-A456-E3BC5E7B4D5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59A9137F-A362-4BF2-A456-E3BC5E7B4D5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF9628AB-1BCB-4C32-87CD-6309CB75A984}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF9628AB-1BCB-4C32-87CD-6309CB75A984}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF9628AB-1BCB-4C32-87CD-6309CB75A984}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF9628AB-1BCB-4C32-87CD-6309CB75A984}.Release|Any CPU.Build.0 = Release|Any CPU
+		{28972C30-8870-4F7D-8364-2E3C3BE530DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28972C30-8870-4F7D-8364-2E3C3BE530DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28972C30-8870-4F7D-8364-2E3C3BE530DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28972C30-8870-4F7D-8364-2E3C3BE530DB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D100AF35-E6A1-4EB4-951C-0C6C153E7528} = {C689FFEB-69A4-4999-8EE6-90073903FE9F}
+		{59A9137F-A362-4BF2-A456-E3BC5E7B4D5A} = {1E6FEC6A-C86F-4E90-BE98-6A6B5AD3B3FD}
+		{FF9628AB-1BCB-4C32-87CD-6309CB75A984} = {7340DA6F-F2DE-42A7-8DDD-7E0529C41963}
+		{28972C30-8870-4F7D-8364-2E3C3BE530DB} = {FA331419-3D95-4584-8ECA-0933C779AD6C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C92C7B88-321B-427E-AA53-85ED1FE15E44}
