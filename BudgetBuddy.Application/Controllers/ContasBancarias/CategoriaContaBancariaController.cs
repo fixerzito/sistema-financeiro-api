@@ -1,6 +1,7 @@
 ﻿using BudgetBuddy.Application.ViewModels.ContasBancarias;
 using BudgetBuddy.Domain.Entities.BankAccounts;
 using BudgetBuddy.Infra.Data.Context;
+using BudgetBuddy.Infra.Data.Repositories.ContasBancarias;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BudgetBuddy.Application.Controllers.ContasBancarias
@@ -9,17 +10,17 @@ namespace BudgetBuddy.Application.Controllers.ContasBancarias
     [Route("/categorias-contas-bancarias")]
     public class CategoriaContaBancariaController : Controller
     {
-        public readonly BudgetBuddyContext _contexto;
+        private readonly IBankAccountCategoryRepository _repository;
 
         public CategoriaContaBancariaController(BudgetBuddyContext contexto)
         {
-            _contexto = contexto;
+            _repository = new BankAccountCategoryRepository(contexto);
         }
 
         [HttpGet]
         public IActionResult Consultar()
         {
-            var categorias = _contexto.CategoriaContaBancaria.ToList();
+            var categorias = _repository.GetAll();
             var categoriasViewModel = new List<CategoriaContaBancariaViewModel>();
 
             foreach (var categoria in categorias)
@@ -39,35 +40,33 @@ namespace BudgetBuddy.Application.Controllers.ContasBancarias
         [HttpGet("{id}")]
         public IActionResult ConsultarPorId(int id)
         {
-            var categoriaBuscada = _contexto.CategoriaContaBancaria.Find(id);
+            var categoriaBuscada =_repository.GetById(id);
 
             if (categoriaBuscada is null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
             return Ok(categoriaBuscada);
         }
 
         [HttpPost]
-        public IActionResult Cadastrar([FromBody] CategoriaContaBancaria categoriaContabancaria)
+        public IActionResult Cadastrar([FromBody] CategoriaContaBancaria categoriaContaBancaria)
         {
-            if (categoriaContabancaria is null) return BadRequest();
+            if (categoriaContaBancaria is null) return BadRequest();
 
-            _contexto.CategoriaContaBancaria.Add(categoriaContabancaria);
-            _contexto.SaveChanges();
+            categoriaContaBancaria = _repository.Add(categoriaContaBancaria);
 
-            return CreatedAtAction(nameof(Consultar), new { id = categoriaContabancaria.Id }, categoriaContabancaria);
+            return CreatedAtAction(nameof(Consultar), new { id = categoriaContaBancaria.Id }, categoriaContaBancaria);
         }
 
         [HttpDelete("{id}")]
         public IActionResult Apagar(int id)
         {
-            var categoriaApagar = _contexto.CategoriaContaBancaria.Find(id);
+            var categoriaApagar = _repository.GetById(id);
             if (categoriaApagar is null) return NotFound();
 
-            _contexto.CategoriaContaBancaria.Remove(categoriaApagar);
-            _contexto.SaveChanges();
+            _repository.Delete(categoriaApagar);
 
             return NoContent();
         }
@@ -75,14 +74,14 @@ namespace BudgetBuddy.Application.Controllers.ContasBancarias
         [HttpPut("{id}")]
         public IActionResult Atualizar([FromBody] CategoriaContaBancaria categoriaRecebida)
         {
-            var categoriaParaEditar = _contexto.CategoriaContaBancaria.Find(categoriaRecebida.Id);
+            var categoriaParaEditar = _repository.GetById(categoriaRecebida.Id);
             if (categoriaParaEditar is null)
             {
                 return BadRequest();
             }
 
             categoriaParaEditar.Nome = categoriaRecebida.Nome;
-            _contexto.SaveChanges();
+            _repository.Update(categoriaParaEditar);
 
             return Ok(categoriaParaEditar);
         }

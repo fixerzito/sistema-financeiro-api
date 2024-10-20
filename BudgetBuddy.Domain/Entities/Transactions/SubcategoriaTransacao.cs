@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace BudgetBuddy.Domain.Entities.Transactions
 {
-    public class SubcategoriaTransacao
+    public class SubcategoriaTransacao : EntityBase
     {
-        public int Id { get; set; }
         public string Nome { get; set; }
         public int Categoria { get; set; }
     }

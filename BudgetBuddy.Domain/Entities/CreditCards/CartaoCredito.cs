@@ -2,9 +2,8 @@
 
 namespace BudgetBuddy.Domain.Entities.CreditCards
 {
-    public class CartaoCredito
+    public class CartaoCredito : EntityBase
     {
-        public int Id { get; set; }
         public string Nome { get; set; }
         public string DigBandeira { get; set; }
         public double Saldo { get; set; }

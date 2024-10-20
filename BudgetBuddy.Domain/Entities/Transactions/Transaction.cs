@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BudgetBuddy.Domain.Entities.Transactions
 {
-    public class Transaction
+    public class Transaction : EntityBase
     {
     }
 }
