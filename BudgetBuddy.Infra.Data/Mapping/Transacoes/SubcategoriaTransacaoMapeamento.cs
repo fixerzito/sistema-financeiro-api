@@ -15,6 +15,17 @@ namespace BudgetBuddy.Infra.Data.Mapping.Transacoes
                 .IsRequired()
                 .HasMaxLength(45);
 
+            builder.Property(subcategoria => subcategoria.RegistroAtivo)
+                .IsRequired()
+                .HasColumnName("registro_ativo")
+                .HasColumnType("BIT")
+                .HasDefaultValue(true);
+
+            builder.Property(subcategoria => subcategoria.DataHoraCriacao)
+                .IsRequired()
+                .HasColumnName("data_hora_criacao")
+                .HasDefaultValueSql("GETDATE()");
+
             builder.HasOne<CategoriaTransacao>()
             .WithMany()
             .HasForeignKey(subcategoria => subcategoria.Categoria);

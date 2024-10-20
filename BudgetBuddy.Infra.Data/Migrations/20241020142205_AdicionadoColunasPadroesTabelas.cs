@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BudgetBuddy.Infra.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class AdicionadoColunasTabelaCategoriaContaBancaria : Migration
+    public partial class AdicionadoColunasPadroesTabelas : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -18,16 +18,18 @@ namespace BudgetBuddy.Infra.Data.Migrations
                 nullable: true);
 
             migrationBuilder.AddColumn<DateTime>(
-                name: "DataHoraCriacao",
+                name: "data_hora_criacao",
                 table: "subcategoria_transacoes",
                 type: "datetime2",
-                nullable: true);
+                nullable: false,
+                defaultValueSql: "GETDATE()");
 
             migrationBuilder.AddColumn<bool>(
-                name: "RegistroAtivo",
+                name: "registro_ativo",
                 table: "subcategoria_transacoes",
-                type: "bit",
-                nullable: true);
+                type: "BIT",
+                nullable: false,
+                defaultValue: true);
 
             migrationBuilder.AddColumn<int>(
                 name: "CriadoPor",
@@ -36,16 +38,18 @@ namespace BudgetBuddy.Infra.Data.Migrations
                 nullable: true);
 
             migrationBuilder.AddColumn<DateTime>(
-                name: "DataHoraCriacao",
+                name: "data_hora_criacao",
                 table: "contas_bancarias",
                 type: "datetime2",
-                nullable: true);
+                nullable: false,
+                defaultValueSql: "GETDATE()");
 
             migrationBuilder.AddColumn<bool>(
-                name: "RegistroAtivo",
+                name: "registro_ativo",
                 table: "contas_bancarias",
-                type: "bit",
-                nullable: true);
+                type: "BIT",
+                nullable: false,
+                defaultValue: true);
 
             migrationBuilder.AddColumn<int>(
                 name: "CriadoPor",
@@ -54,16 +58,18 @@ namespace BudgetBuddy.Infra.Data.Migrations
                 nullable: true);
 
             migrationBuilder.AddColumn<DateTime>(
-                name: "DataHoraCriacao",
+                name: "data_hora_criacao",
                 table: "categoria_transacoes",
                 type: "datetime2",
-                nullable: true);
+                nullable: false,
+                defaultValueSql: "GETDATE()");
 
             migrationBuilder.AddColumn<bool>(
-                name: "RegistroAtivo",
+                name: "registro_ativo",
                 table: "categoria_transacoes",
-                type: "bit",
-                nullable: true);
+                type: "BIT",
+                nullable: false,
+                defaultValue: true);
 
             migrationBuilder.AddColumn<int>(
                 name: "CriadoPor",
@@ -76,7 +82,7 @@ namespace BudgetBuddy.Infra.Data.Migrations
                 table: "categoria_contas_bancarias",
                 type: "datetime2",
                 nullable: false,
-                defaultValue: new DateTime(2024, 10, 20, 11, 0, 18, 467, DateTimeKind.Local).AddTicks(5159));
+                defaultValueSql: "GETDATE()");
 
             migrationBuilder.AddColumn<bool>(
                 name: "registro_ativo",
@@ -92,16 +98,18 @@ namespace BudgetBuddy.Infra.Data.Migrations
                 nullable: true);
 
             migrationBuilder.AddColumn<DateTime>(
-                name: "DataHoraCriacao",
+                name: "data_hora_criacao",
                 table: "cartoes_credito",
                 type: "datetime2",
-                nullable: true);
+                nullable: false,
+                defaultValueSql: "GETDATE()");
 
             migrationBuilder.AddColumn<bool>(
-                name: "RegistroAtivo",
+                name: "registro_ativo",
                 table: "cartoes_credito",
-                type: "bit",
-                nullable: true);
+                type: "BIT",
+                nullable: false,
+                defaultValue: true);
         }
 
         /// <inheritdoc />
@@ -112,11 +120,11 @@ namespace BudgetBuddy.Infra.Data.Migrations
                 table: "subcategoria_transacoes");
 
             migrationBuilder.DropColumn(
-                name: "DataHoraCriacao",
+                name: "data_hora_criacao",
                 table: "subcategoria_transacoes");
 
             migrationBuilder.DropColumn(
-                name: "RegistroAtivo",
+                name: "registro_ativo",
                 table: "subcategoria_transacoes");
 
             migrationBuilder.DropColumn(
@@ -124,11 +132,11 @@ namespace BudgetBuddy.Infra.Data.Migrations
                 table: "contas_bancarias");
 
             migrationBuilder.DropColumn(
-                name: "DataHoraCriacao",
+                name: "data_hora_criacao",
                 table: "contas_bancarias");
 
             migrationBuilder.DropColumn(
-                name: "RegistroAtivo",
+                name: "registro_ativo",
                 table: "contas_bancarias");
 
             migrationBuilder.DropColumn(
@@ -136,11 +144,11 @@ namespace BudgetBuddy.Infra.Data.Migrations
                 table: "categoria_transacoes");
 
             migrationBuilder.DropColumn(
-                name: "DataHoraCriacao",
+                name: "data_hora_criacao",
                 table: "categoria_transacoes");
 
             migrationBuilder.DropColumn(
-                name: "RegistroAtivo",
+                name: "registro_ativo",
                 table: "categoria_transacoes");
 
             migrationBuilder.DropColumn(
@@ -160,11 +168,11 @@ namespace BudgetBuddy.Infra.Data.Migrations
                 table: "cartoes_credito");
 
             migrationBuilder.DropColumn(
-                name: "DataHoraCriacao",
+                name: "data_hora_criacao",
                 table: "cartoes_credito");
 
             migrationBuilder.DropColumn(
-                name: "RegistroAtivo",
+                name: "registro_ativo",
                 table: "cartoes_credito");
         }
     }

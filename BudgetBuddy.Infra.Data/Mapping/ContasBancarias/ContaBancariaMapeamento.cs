@@ -26,6 +26,17 @@ namespace BudgetBuddy.Infra.Data.Mapping.ContasBancarias
             builder.HasOne<CategoriaContaBancaria>()
                 .WithMany()
                 .HasForeignKey(contaBancaria => contaBancaria.IdCategoria);
+
+            builder.Property(contaBancaria => contaBancaria.RegistroAtivo)
+                .IsRequired()
+                .HasColumnName("registro_ativo")
+                .HasColumnType("BIT")
+                .HasDefaultValue(true);
+
+            builder.Property(contaBancaria => contaBancaria.DataHoraCriacao)
+                .IsRequired()
+                .HasColumnName("data_hora_criacao")
+                .HasDefaultValueSql("GETDATE()");
         }
     }
 }

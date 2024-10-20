@@ -24,7 +24,7 @@ namespace BudgetBuddy.Infra.Data.Mapping.ContasBancarias
             builder.Property(categoria => categoria.DataHoraCriacao)
                 .IsRequired()
                 .HasColumnName("data_hora_criacao")
-                .HasDefaultValue(DateTime.Now);
+                .HasDefaultValueSql("GETDATE()");
         }
     }
 }

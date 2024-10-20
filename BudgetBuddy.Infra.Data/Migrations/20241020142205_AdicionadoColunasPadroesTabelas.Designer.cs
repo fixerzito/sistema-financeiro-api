@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BudgetBuddy.Infra.Data.Migrations
 {
     [DbContext(typeof(BudgetBuddyContext))]
-    [Migration("20241020140018_AdicionadoColunasTabelaCategoriaContaBancaria")]
-    partial class AdicionadoColunasTabelaCategoriaContaBancaria
+    [Migration("20241020142205_AdicionadoColunasPadroesTabelas")]
+    partial class AdicionadoColunasPadroesTabelas
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -40,8 +40,8 @@ namespace BudgetBuddy.Infra.Data.Migrations
                         .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2024, 10, 20, 11, 0, 18, 467, DateTimeKind.Local).AddTicks(5159))
-                        .HasColumnName("data_hora_criacao");
+                        .HasColumnName("data_hora_criacao")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<string>("Nome")
                         .IsRequired()
@@ -72,7 +72,11 @@ namespace BudgetBuddy.Infra.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("DataHoraCriacao")
-                        .HasColumnType("datetime2");
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasColumnName("data_hora_criacao")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<string>("Icon")
                         .IsRequired()
@@ -88,7 +92,11 @@ namespace BudgetBuddy.Infra.Data.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<bool?>("RegistroAtivo")
-                        .HasColumnType("bit");
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("BIT")
+                        .HasDefaultValue(true)
+                        .HasColumnName("registro_ativo");
 
                     b.Property<decimal>("Saldo")
                         .HasColumnType("decimal(18, 2)");
@@ -112,7 +120,11 @@ namespace BudgetBuddy.Infra.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("DataHoraCriacao")
-                        .HasColumnType("datetime2");
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasColumnName("data_hora_criacao")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<int>("DiaFechamento")
                         .HasColumnType("int");
@@ -137,7 +149,11 @@ namespace BudgetBuddy.Infra.Data.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<bool?>("RegistroAtivo")
-                        .HasColumnType("bit");
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("BIT")
+                        .HasDefaultValue(true)
+                        .HasColumnName("registro_ativo");
 
                     b.Property<decimal>("Saldo")
                         .HasColumnType("decimal(18, 2)");
@@ -161,7 +177,11 @@ namespace BudgetBuddy.Infra.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("DataHoraCriacao")
-                        .HasColumnType("datetime2");
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasColumnName("data_hora_criacao")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<string>("Nome")
                         .IsRequired()
@@ -169,7 +189,11 @@ namespace BudgetBuddy.Infra.Data.Migrations
                         .HasColumnType("nvarchar(45)");
 
                     b.Property<bool?>("RegistroAtivo")
-                        .HasColumnType("bit");
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("BIT")
+                        .HasDefaultValue(true)
+                        .HasColumnName("registro_ativo");
 
                     b.HasKey("Id");
 
@@ -191,7 +215,11 @@ namespace BudgetBuddy.Infra.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("DataHoraCriacao")
-                        .HasColumnType("datetime2");
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasColumnName("data_hora_criacao")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<string>("Nome")
                         .IsRequired()
@@ -199,7 +227,11 @@ namespace BudgetBuddy.Infra.Data.Migrations
                         .HasColumnType("nvarchar(45)");
 
                     b.Property<bool?>("RegistroAtivo")
-                        .HasColumnType("bit");
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("BIT")
+                        .HasDefaultValue(true)
+                        .HasColumnName("registro_ativo");
 
                     b.HasKey("Id");
 

@@ -33,6 +33,17 @@ namespace BudgetBuddy.Infra.Data.Mapping.CartoesCredito
             builder.Property(cartao => cartao.DiaVencimento)
                 .IsRequired();
 
+            builder.Property(cartao => cartao.RegistroAtivo)
+               .IsRequired()
+               .HasColumnName("registro_ativo")
+               .HasColumnType("BIT")
+               .HasDefaultValue(true);
+
+            builder.Property(cartao => cartao.DataHoraCriacao)
+                .IsRequired()
+                .HasColumnName("data_hora_criacao")
+                .HasDefaultValueSql("GETDATE()");
+
             builder.HasOne(cartao => cartao.ContaBancaria)
                .WithMany()
                .OnDelete(DeleteBehavior.SetNull)
