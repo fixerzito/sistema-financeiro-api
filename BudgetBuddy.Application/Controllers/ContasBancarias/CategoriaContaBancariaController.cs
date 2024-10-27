@@ -1,7 +1,7 @@
-﻿using BudgetBuddy.Application.ViewModels.ContasBancarias;
-using BudgetBuddy.Domain.Entities.BankAccounts;
+﻿using BudgetBuddy.Domain.Dtos.ContasBancarias.Forms;
+using BudgetBuddy.Domain.Interfaces;
 using BudgetBuddy.Infra.Data.Context;
-using BudgetBuddy.Infra.Data.Repositories.ContasBancarias;
+using BudgetBuddy.Service.Services.ContasBancarias;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BudgetBuddy.Application.Controllers.ContasBancarias
@@ -10,81 +10,68 @@ namespace BudgetBuddy.Application.Controllers.ContasBancarias
     [Route("/categorias-contas-bancarias")]
     public class CategoriaContaBancariaController : Controller
     {
-        private readonly IBankAccountCategoryRepository _repository;
+        private readonly ICategoriaContaBancariaService _service;
 
         public CategoriaContaBancariaController(BudgetBuddyContext contexto)
         {
-            _repository = new BankAccountCategoryRepository(contexto);
+            _service = new CategoriaContaBancariaService(contexto);
         }
 
         [HttpGet]
         public IActionResult Consultar()
         {
-            var categorias = _repository.GetAll();
-            var categoriasViewModel = new List<CategoriaContaBancariaViewModel>();
+            var dtos = _service.GetAll();
 
-            foreach (var categoria in categorias)
-            {
-                var categoriaViewModel = new CategoriaContaBancariaViewModel
-                {
-                    Id = categoria.Id,
-                    Nome = categoria.Nome
-                };
-
-                categoriasViewModel.Add(categoriaViewModel);
-            }
-
-            return Ok(categoriasViewModel);
+            return Ok(dtos);
         }
 
         [HttpGet("{id}")]
         public IActionResult ConsultarPorId(int id)
         {
-            var categoriaBuscada =_repository.GetById(id);
-
-            if (categoriaBuscada is null)
+            var dto =_service.GetById(id);
+             
+            if (dto is null)
             {
                 return NotFound();
             }
 
-            return Ok(categoriaBuscada);
+            return Ok(dto);
         }
 
         [HttpPost]
-        public IActionResult Cadastrar([FromBody] CategoriaContaBancaria categoriaContaBancaria)
+        public IActionResult Cadastrar([FromBody] CategoriaContaBancariaFormInsertDto dto)
         {
-            if (categoriaContaBancaria is null) return BadRequest();
+            var id = _service.Add(dto);
 
-            categoriaContaBancaria = _repository.Add(categoriaContaBancaria);
-
-            return CreatedAtAction(nameof(Consultar), new { id = categoriaContaBancaria.Id }, categoriaContaBancaria);
+            return CreatedAtAction(nameof(Consultar), new { id = id}, dto);
         }
 
         [HttpDelete("{id}")]
         public IActionResult Apagar(int id)
         {
-            var categoriaApagar = _repository.GetById(id);
-            if (categoriaApagar is null) return NotFound();
-
-            _repository.Delete(categoriaApagar);
-
+            try
+            {
+                _service.Delete(id);
             return NoContent();
-        }
-
-        [HttpPut("{id}")]
-        public IActionResult Atualizar([FromBody] CategoriaContaBancaria categoriaRecebida)
-        {
-            var categoriaParaEditar = _repository.GetById(categoriaRecebida.Id);
-            if (categoriaParaEditar is null)
+            }
+            catch (Exception ex)
             {
                 return BadRequest();
             }
-
-            categoriaParaEditar.Nome = categoriaRecebida.Nome;
-            _repository.Update(categoriaParaEditar);
-
-            return Ok(categoriaParaEditar);
         }
 
+        [HttpPut("{id}")]
+        public IActionResult Atualizar([FromBody] CategoriaContaBancariaFormUpdateDto dto)
+        {
+            try
+            {
+                _service.Update(dto);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+        }
     }
 }

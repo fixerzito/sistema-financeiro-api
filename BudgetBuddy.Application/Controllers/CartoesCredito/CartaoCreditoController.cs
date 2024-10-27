@@ -1,6 +1,11 @@
 ﻿using BudgetBuddy.Application.ViewModels.CartoesCredito;
+using BudgetBuddy.Domain.Dtos.CartoesCredito.Forms;
+using BudgetBuddy.Domain.Dtos.ContasBancarias.Forms;
 using BudgetBuddy.Domain.Entities.CreditCards;
+using BudgetBuddy.Domain.Interfaces;
 using BudgetBuddy.Infra.Data.Context;
+using BudgetBuddy.Service.Services.CartoesCredito;
+using BudgetBuddy.Service.Services.ContasBancarias;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,93 +15,69 @@ namespace BudgetBuddy.Application.Controllers.CartoesCredito
     [Route("cartoes")]
     public class CartaoCreditoController : Controller
     {
-        private readonly BudgetBuddyContext _contexto;
+        private readonly ICartaoCreditoService _service;
 
         public CartaoCreditoController(BudgetBuddyContext contexto)
         {
-            _contexto = contexto;
+            _service = new CartaoCreditoService(contexto);
         }
 
         [HttpGet]
 
         public IActionResult Consultar()
         {
-            var cartoesCredito = _contexto.CartaoCredito
-                 .Include(c => c.ContaBancaria).ToList();
+            var dtos = _service.GetAll();
 
-            var cartoesCreditoViewModel = new List<CartaoCreditoViewModel>();
-
-            foreach (var cartaoCredito in cartoesCredito)
-            {
-                var cartaoCreditoViewModel = new CartaoCreditoViewModel
-                {
-                    Id = cartaoCredito.Id,
-                    Nome = cartaoCredito.Nome,
-                    DigBandeira = cartaoCredito.DigBandeira,
-                    Saldo = cartaoCredito.Saldo,
-                    Limite = cartaoCredito.Limite,
-                    DiaFechamento = cartaoCredito.DiaFechamento,
-                    DiaVencimento = cartaoCredito.DiaVencimento,
-                    ContaVinculada = cartaoCredito.ContaBancaria?.Nome
-                };
-
-                cartoesCreditoViewModel.Add(cartaoCreditoViewModel);
-            }
-
-            return Ok(cartoesCreditoViewModel);
+            return Ok(dtos);
         }
 
         [HttpGet("{id}")]
         public IActionResult ConsultarPorId(int id)
         {
-            var cartaoCreditoBuscado = _contexto.CartaoCredito.Find(id);
-            if (cartaoCreditoBuscado == null) return BadRequest();
+            var dto = _service.GetById(id);
 
-            return Ok(cartaoCreditoBuscado);
+            if (dto is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(dto);
         }
 
         [HttpPost]
-        public IActionResult Cadastrar([FromBody] CartaoCredito cartaoCredito)
+        public IActionResult Cadastrar([FromBody] CartaoCreditoFormInsertDto dto)
         {
-            if (cartaoCredito is null) return BadRequest();
+            var id = _service.Add(dto);
 
-            _contexto.CartaoCredito.Add(cartaoCredito);
-            _contexto.SaveChanges();
-
-            return CreatedAtAction(nameof(Consultar), new { id = cartaoCredito.Id }, cartaoCredito);
+            return CreatedAtAction(nameof(Consultar), new { id = id }, dto);
         }
 
         [HttpDelete("{id}")]
         public IActionResult Apagar(int id)
         {
-            var cartaoCreditoApagar = _contexto.CartaoCredito.Find(id);
-            if (cartaoCreditoApagar is null) return NotFound();
-
-            _contexto.CartaoCredito.Remove(cartaoCreditoApagar);
-            _contexto.SaveChanges();
-
-            return NoContent();
-        }
-
-        [HttpPut("{id}")]
-        public IActionResult Atualizar([FromBody] CartaoCredito cartaoCreditoRecebido)
-        {
-            var cartaoCredito = _contexto.CartaoCredito.Find(cartaoCreditoRecebido.Id);
-            if (cartaoCredito is null)
+            try
+            {
+                _service.Delete(id);
+                return NoContent();
+            }
+            catch (Exception ex)
             {
                 return BadRequest();
             }
+        }
 
-            cartaoCredito.Nome = cartaoCreditoRecebido.Nome;
-            cartaoCredito.DigBandeira = cartaoCreditoRecebido.DigBandeira;
-            cartaoCredito.Saldo = cartaoCreditoRecebido.Saldo;
-            cartaoCredito.Limite = cartaoCreditoRecebido.Limite;
-            cartaoCredito.DiaFechamento = cartaoCreditoRecebido.DiaFechamento;
-            cartaoCredito.DiaVencimento = cartaoCreditoRecebido.DiaVencimento;
-            cartaoCredito.IdContaVinculada = cartaoCreditoRecebido.IdContaVinculada;
-            _contexto.SaveChanges();
-
-            return Ok(cartaoCredito);
+        [HttpPut("{id}")]
+        public IActionResult Atualizar([FromBody] CartaoCreditoFormUpdateDto dto)
+        {
+            try
+            {
+                _service.Update(dto);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
         }
     }
 }

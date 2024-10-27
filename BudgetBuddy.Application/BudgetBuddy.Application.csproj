@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BudgetBuddy.Infra.Data\BudgetBuddy.Infra.Data.csproj" />
+    <ProjectReference Include="..\BudgetBuddy.Service\BudgetBuddy.Service.csproj" />
   </ItemGroup>
 
 </Project>

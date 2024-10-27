@@ -13,9 +13,6 @@ namespace BudgetBuddy.Infra.Data.Context
         // dotnet ef migrations add AdicionadoColunasTabelaCategoriaContaBancaria --project BudgetBuddy.Infra.Data --startup-project BudgetBuddy.Application
         // dotnet ef database update --project BudgetBuddy.Infra.Data --startup-project BudgetBuddy.Application
 
-        public DbSet<CategoriaTransacao> CategoriaTransacao { get; set; }
-        public DbSet<SubcategoriaTransacao> SubcategoriaTransacao { get; set; }
-
         //Contas Bancarias
         public DbSet<ContaBancaria> ContaBancaria { get; set; }
 

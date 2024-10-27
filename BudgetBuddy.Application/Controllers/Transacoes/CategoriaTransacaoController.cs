@@ -1,6 +1,9 @@
 ﻿using BudgetBuddy.Application.ViewModels.Transacoes;
+using BudgetBuddy.Domain.Dtos.Transacoes.Forms;
 using BudgetBuddy.Domain.Entities.Transactions;
+using BudgetBuddy.Domain.Interfaces;
 using BudgetBuddy.Infra.Data.Context;
+using BudgetBuddy.Service.Services.Transacoes;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BudgetBuddy.Application.Controllers.Transacoes
@@ -9,92 +12,68 @@ namespace BudgetBuddy.Application.Controllers.Transacoes
     [Route("/categorias-transacao")]
     public class CategoriaTransacaoController : Controller
     {
-        private readonly BudgetBuddyContext _contexto;
+        private readonly ICategoriaTransacaoService _service;
 
         public CategoriaTransacaoController(BudgetBuddyContext contexto)
         {
-            _contexto = contexto;
+            _service = new CategoriaTransacaoService(contexto);
         }
 
         [HttpGet]
         public IActionResult Consultar()
         {
-            //recebe do contexto, buscando de categorias, todos os items da tabela
-            var categorias = _contexto.CategoriaTransacao.ToList();
+            var dtos = _service.GetAll();
 
-            //instancia uma lista de CategoriViewModel
-            var categoriasViewModel = new List<CategoriaTransacaoViewModel>();
-
-            // criaco um loop para que para cada item de 'categorias', seja atribuido um item na lista de ViewModels
-            foreach (var categoria in categorias)
-            {
-                var categoriaViewModel = new CategoriaTransacaoViewModel
-                {
-                    Id = categoria.Id,
-                    Nome = categoria.Nome
-                };
-                categoriasViewModel.Add(categoriaViewModel);
-            }
-            //retorno do da lista buscada
-            return Ok(categoriasViewModel);
+            return Ok(dtos);
         }
 
         [HttpGet("{id}")]
         public IActionResult ConsultarPorId(int id)
         {
-            // Verifica se a categoria existe no contexto
-            var categoriaParaEditar = _contexto.CategoriaTransacao.Find(id);
-            if (categoriaParaEditar == null)
+            var dto = _service.GetById(id);
+            if (dto is null)
             {
                 return NotFound();
             }
 
-            return Ok(categoriaParaEditar);
+            return Ok(dto);
         }
 
         [HttpPut("{id}")]
-        public IActionResult AtualizarCategoria([FromBody] CategoriaTransacao categoriaRecebida)
+        public IActionResult AtualizarCategoria([FromBody] CategoriaTransacaoFormUpdateDto dto)
         {
-            //recebe a categoria no id
-            var categoriaParaEditar = _contexto.CategoriaTransacao.Find(categoriaRecebida.Id);
-            if (categoriaParaEditar == null)
+            try
             {
-                return NotFound();
+                _service.Update(dto);
+                return NoContent();
             }
-            //atribui as novas propriedades a categoria
-            categoriaParaEditar.Nome = categoriaRecebida.Nome;
-            _contexto.SaveChanges();
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
 
-            return Ok(categoriaParaEditar);
         }
 
         [HttpPost]
-        public IActionResult Cadastrar([FromBody] CategoriaTransacao categoriaCadastrar)
+        public IActionResult Cadastrar([FromBody] CategoriaTransacaoFormInsertDto dto)
         {
-            if (categoriaCadastrar is null)
-            {
-                return BadRequest("Categoria inválida.");
-            }
+            var id = _service.Add(dto);
 
-            _contexto.CategoriaTransacao.Add(categoriaCadastrar);
-            _contexto.SaveChanges();
-
-            return CreatedAtAction(nameof(Consultar), new { id = categoriaCadastrar.Id }, categoriaCadastrar);
+            return CreatedAtAction(nameof(Consultar), new { id = id }, dto);
         }
 
         [HttpDelete("{id}")]
         public IActionResult Apagar(int id)
         {
-            var categoriaApagada = _contexto.CategoriaTransacao.Find(id);
-            if (categoriaApagada == null)
+            try
             {
-                return NotFound();
+                _service.Delete(id);
+                return NoContent();
             }
-
-            _contexto.CategoriaTransacao.Remove(categoriaApagada);
-            _contexto.SaveChanges();
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
         }
 
     }

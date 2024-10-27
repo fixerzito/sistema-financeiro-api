@@ -1,6 +1,7 @@
-﻿using BudgetBuddy.Application.ViewModels.ContasBancarias;
-using BudgetBuddy.Domain.Entities.BankAccounts;
+﻿using BudgetBuddy.Domain.Dtos.ContasBancarias.Forms;
+using BudgetBuddy.Domain.Interfaces;
 using BudgetBuddy.Infra.Data.Context;
+using BudgetBuddy.Service.Services.ContasBancarias;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BudgetBuddy.Application.Controllers.ContasBancarias
@@ -9,85 +10,69 @@ namespace BudgetBuddy.Application.Controllers.ContasBancarias
     [Route("/contas")]
     public class ContaBancariaController : Controller
     {
-        private readonly BudgetBuddyContext _contexto;
+        private readonly IContaBancariaService _service;
 
         public ContaBancariaController(BudgetBuddyContext contexto)
         {
-            _contexto = contexto;
+            _service = new ContaBancariaService(contexto);
         }
 
         [HttpGet]
 
         public IActionResult Consultar()
         {
-            var contasBancarias = _contexto.ContaBancaria.ToList();
-            var contasBancariasViewModel = new List<ContaBancariaViewModel>();
+            var dtos = _service.GetAll();
 
-            foreach (var contaBancaria in contasBancarias)
-            {
-                var contaBancariaViewModel = new ContaBancariaViewModel
-                {
-                    Id = contaBancaria.Id,
-                    Nome = contaBancaria.Nome,
-                    Saldo = contaBancaria.Saldo,
-                    Icon = contaBancaria.Icon,
-                    IdCategoria = contaBancaria.IdCategoria
-                };
-
-                contasBancariasViewModel.Add(contaBancariaViewModel);
-            }
-
-            return Ok(contasBancariasViewModel);
+            return Ok(dtos);
         }
 
         [HttpGet("{id}")]
         public IActionResult ConsultarPorId(int id)
         {
-            var contaBancariasBuscada = _contexto.ContaBancaria.Find(id);
-            if (contaBancariasBuscada == null) return BadRequest();
+            var dto = _service.GetById(id);
 
-            return Ok(contaBancariasBuscada);
+            if (dto is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(dto);
         }
 
         [HttpPost]
-        public IActionResult Cadastrar([FromBody] ContaBancaria contabancaria)
+        public IActionResult Cadastrar([FromBody] ContaBancariaFormInsertDto dto)
         {
-            if (contabancaria is null) return BadRequest();
+            var id = _service.Add(dto);
 
-            _contexto.ContaBancaria.Add(contabancaria);
-            _contexto.SaveChanges();
-
-            return CreatedAtAction(nameof(Consultar), new { id = contabancaria.Id }, contabancaria);
+            return CreatedAtAction(nameof(Consultar), new { id = id }, dto);
         }
 
         [HttpDelete("{id}")]
         public IActionResult Apagar(int id)
         {
-            var contaBancariaApagar = _contexto.ContaBancaria.Find(id);
-            if (contaBancariaApagar is null) return NotFound();
-
-            _contexto.ContaBancaria.Remove(contaBancariaApagar);
-            _contexto.SaveChanges();
-
-            return NoContent();
-        }
-
-        [HttpPut("{id}")]
-        public IActionResult Atualizar([FromBody] ContaBancaria contaBancariaRecebida)
-        {
-            var contaBancariaParaEditar = _contexto.ContaBancaria.Find(contaBancariaRecebida.Id);
-            if (contaBancariaParaEditar is null)
+            try
+            {
+                _service.Delete(id);
+                return NoContent();
+            }
+            catch (Exception ex)
             {
                 return BadRequest();
             }
+        }
 
-            contaBancariaParaEditar.Nome = contaBancariaRecebida.Nome;
-            contaBancariaParaEditar.Saldo = contaBancariaRecebida.Saldo;
-            contaBancariaParaEditar.Icon = contaBancariaRecebida.Icon;
-            contaBancariaParaEditar.IdCategoria = contaBancariaRecebida.IdCategoria;
-            _contexto.SaveChanges();
-
-            return Ok(contaBancariaParaEditar);
+        [HttpPut("{id}")]
+        public IActionResult Atualizar([FromBody] ContaBancariaFormUpdateDto dto)
+        {
+            try
+            {
+                _service.Update(dto);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
         }
 
     }

@@ -1,6 +1,9 @@
 ﻿using BudgetBuddy.Application.ViewModels.Transacoes;
+using BudgetBuddy.Domain.Dtos.Transacoes.Forms;
 using BudgetBuddy.Domain.Entities.Transactions;
+using BudgetBuddy.Domain.Interfaces;
 using BudgetBuddy.Infra.Data.Context;
+using BudgetBuddy.Service.Services.Transacoes;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BudgetBuddy.Application.Controllers.Transacoes
@@ -9,91 +12,67 @@ namespace BudgetBuddy.Application.Controllers.Transacoes
     [Route("subcategorias-transacao")]
     public class SubcategoriaTransacaoController : Controller
     {
-        private readonly BudgetBuddyContext _contexto;
+        private readonly ISubcategoriaTransacaoService _service;
 
         public SubcategoriaTransacaoController(BudgetBuddyContext contexto)
         {
-            _contexto = contexto;
+            _service = new SubcategoriaTransacaoService(contexto);
         }
 
         [HttpGet]
         public IActionResult Consultar()
         {
-            var subcategorias = _contexto.SubcategoriaTransacao.ToList();
+            var dtos = _service.GetAll();
 
-            var subcategoriasViewModel = new List<SubcategoriaTransacaoViewModel>();
-
-            foreach (var subcategoria in subcategorias)
-            {
-                var subcategoriaViewModel = new SubcategoriaTransacaoViewModel
-                {
-                    Id = subcategoria.Id,
-                    Nome = subcategoria.Nome,
-                    Categoria = subcategoria.Categoria
-                };
-
-                subcategoriasViewModel.Add(subcategoriaViewModel);
-            }
-
-            return Ok(subcategoriasViewModel);
+            return Ok(dtos);
         }
 
         [HttpGet("{id}")]
         public IActionResult ConsultarPorId(int id)
         {
-            var subcategoriaBuscada = _contexto.SubcategoriaTransacao.Find(id);
-            if (subcategoriaBuscada is null)
+            var dto = _service.GetById(id);
+            if (dto is null)
             {
                 return NotFound();
             }
 
-            return Ok(subcategoriaBuscada);
+            return Ok(dto);
         }
 
         [HttpDelete("{id}")]
         public IActionResult Apagar(int id)
         {
-            var subcategoriaApagada = _contexto.SubcategoriaTransacao.Find(id);
-            if (subcategoriaApagada == null)
+            try
             {
-                return NotFound();
+                _service.Delete(id);
+                return NoContent();
             }
-
-            _contexto.SubcategoriaTransacao.Remove(subcategoriaApagada);
-            _contexto.SaveChanges();
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
         }
 
         [HttpPost]
-        public IActionResult Cadastrar([FromBody] SubcategoriaTransacao subcategoriaCadastrar)
+        public IActionResult Cadastrar([FromBody] SubcategoriaTransacaoFormInsertDto dto)
         {
-            if (subcategoriaCadastrar is null)
-            {
-                return BadRequest("Categoria inválida.");
-            }
+            var id = _service.Add(dto);
 
-            _contexto.SubcategoriaTransacao.Add(subcategoriaCadastrar);
-            _contexto.SaveChanges();
-
-            return CreatedAtAction(nameof(Consultar), new { id = subcategoriaCadastrar.Id }, subcategoriaCadastrar);
+            return CreatedAtAction(nameof(Consultar), new { id = id }, dto);
         }
 
         [HttpPut("{id}")]
-        public IActionResult AtualizarSubcategoria([FromBody] SubcategoriaTransacao subcategoriaRecebida)
+        public IActionResult Atualizar([FromBody] SubcategoriaTransacaoFormUpdateDto dto)
         {
-            var subcategoriaEditar = _contexto.SubcategoriaTransacao.Find(subcategoriaRecebida.Id);
-            if (subcategoriaEditar is null)
+            try
             {
-                return NotFound();
+                _service.Update(dto);
+                return NoContent();
             }
-
-            subcategoriaEditar.Nome = subcategoriaRecebida.Nome;
-            subcategoriaEditar.Categoria = subcategoriaRecebida.Categoria;
-
-            _contexto.SaveChanges();
-
-            return Ok(subcategoriaEditar);
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
         }
     }
 }
