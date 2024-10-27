@@ -1,13 +1,6 @@
-﻿using BudgetBuddy.Domain.Entities.BankAccounts;
-using BudgetBuddy.Domain.Entities.CreditCards;
+﻿using BudgetBuddy.Domain.Entities.CreditCards;
 using BudgetBuddy.Infra.Data.Context;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace BudgetBuddy.Infra.Data.Repositories.CartoesCredito
 {

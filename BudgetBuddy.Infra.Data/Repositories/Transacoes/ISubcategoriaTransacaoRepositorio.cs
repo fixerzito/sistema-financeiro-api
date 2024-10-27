@@ -1,5 +1,4 @@
 ﻿using BudgetBuddy.Domain.Entities.Transactions;
-using BudgetBuddy.Infra.Data.Context;
 
 namespace BudgetBuddy.Infra.Data.Repositories.Transacoes
 {

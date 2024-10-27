@@ -1,10 +1,5 @@
 ﻿using BudgetBuddy.Domain.Dtos.Transacoes.Forms;
 using BudgetBuddy.Domain.Dtos.Transacoes.Tables;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BudgetBuddy.Domain.Interfaces
 {

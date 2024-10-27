@@ -1,13 +1,8 @@
-﻿using BudgetBuddy.Application.ViewModels.CartoesCredito;
-using BudgetBuddy.Domain.Dtos.CartoesCredito.Forms;
-using BudgetBuddy.Domain.Dtos.ContasBancarias.Forms;
-using BudgetBuddy.Domain.Entities.CreditCards;
+﻿using BudgetBuddy.Domain.Dtos.CartoesCredito.Forms;
 using BudgetBuddy.Domain.Interfaces;
 using BudgetBuddy.Infra.Data.Context;
 using BudgetBuddy.Service.Services.CartoesCredito;
-using BudgetBuddy.Service.Services.ContasBancarias;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace BudgetBuddy.Application.Controllers.CartoesCredito
 {

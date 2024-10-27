@@ -1,5 +1,7 @@
 ﻿using BudgetBuddy.Domain.Dtos.ContasBancarias.Forms;
 using BudgetBuddy.Domain.Dtos.ContasBancarias.Tables;
+using BudgetBuddy.Domain.Dtos.Filters;
+using BudgetBuddy.Domain.Dtos.Tables;
 using BudgetBuddy.Domain.Entities.BankAccounts;
 using BudgetBuddy.Domain.Interfaces;
 using BudgetBuddy.Infra.Data.Context;
@@ -35,9 +37,9 @@ namespace BudgetBuddy.Service.Services.ContasBancarias
             _repository.Delete(categoria);
         }
 
-        public List<CategoriaContaBancariaTableDto> GetAll()
+        public TableDto GetAll(TableFilter filtro)
         {
-            var categorias = _repository.GetAll();
+            var categorias = _repository.GetAll(filtro);
             var dtos = new List<CategoriaContaBancariaTableDto>();
 
             foreach (var categoria in categorias)
@@ -50,7 +52,14 @@ namespace BudgetBuddy.Service.Services.ContasBancarias
 
                 dtos.Add(dto);
             }
-            return dtos;
+
+            var quantidadeRegistros = _repository.Count();
+
+            return new TableDto
+            {
+                QuantidadeRegistros = quantidadeRegistros,  
+                Dados = categorias
+            };
         }
 
         public CategoriaContaBancariaTableDto? GetById(int id)

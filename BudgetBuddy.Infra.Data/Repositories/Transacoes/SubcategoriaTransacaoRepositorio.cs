@@ -1,11 +1,6 @@
 ﻿using BudgetBuddy.Domain.Entities.Transactions;
 using BudgetBuddy.Infra.Data.Context;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BudgetBuddy.Infra.Data.Repositories.Transacoes
 {
@@ -35,6 +30,7 @@ namespace BudgetBuddy.Infra.Data.Repositories.Transacoes
             _contexto.SaveChanges();
         }
 
+        // TODO: Trocar para interface
         public List<SubcategoriaTransacao> GetAll()
         {
             return _dbSet.ToList();

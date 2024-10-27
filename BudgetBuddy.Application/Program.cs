@@ -38,5 +38,13 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+using (var scopo = app.Services.CreateScope())
+{
+    // Irá aplicar automaticamente as migrações quando a aplicação subir,
+    // ou seja, vai criar o banco de dados com as tabelas mapeadas
+    var contexto = scopo.ServiceProvider.GetService<BudgetBuddyContext>();
+    contexto?.Database.Migrate();
+}
+
 
 app.Run();

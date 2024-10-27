@@ -1,4 +1,5 @@
 ﻿using BudgetBuddy.Domain.Dtos.ContasBancarias.Forms;
+using BudgetBuddy.Domain.Dtos.Filters;
 using BudgetBuddy.Domain.Interfaces;
 using BudgetBuddy.Infra.Data.Context;
 using BudgetBuddy.Service.Services.ContasBancarias;
@@ -18,11 +19,11 @@ namespace BudgetBuddy.Application.Controllers.ContasBancarias
         }
 
         [HttpGet]
-        public IActionResult Consultar()
+        public IActionResult Consultar([FromQuery] TableFilter filtro )
         {
-            var dtos = _service.GetAll();
+            var tableDto = _service.GetAll(filtro);
 
-            return Ok(dtos);
+            return Ok(tableDto);
         }
 
         [HttpGet("{id}")]

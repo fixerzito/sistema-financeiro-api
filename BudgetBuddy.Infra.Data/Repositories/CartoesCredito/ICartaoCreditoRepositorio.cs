@@ -1,10 +1,4 @@
-﻿using BudgetBuddy.Domain.Entities.BankAccounts;
-using BudgetBuddy.Domain.Entities.CreditCards;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using BudgetBuddy.Domain.Entities.CreditCards;
 
 namespace BudgetBuddy.Infra.Data.Repositories.CartoesCredito
 {

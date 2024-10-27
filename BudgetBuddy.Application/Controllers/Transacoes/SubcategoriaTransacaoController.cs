@@ -1,6 +1,4 @@
-﻿using BudgetBuddy.Application.ViewModels.Transacoes;
-using BudgetBuddy.Domain.Dtos.Transacoes.Forms;
-using BudgetBuddy.Domain.Entities.Transactions;
+﻿using BudgetBuddy.Domain.Dtos.Transacoes.Forms;
 using BudgetBuddy.Domain.Interfaces;
 using BudgetBuddy.Infra.Data.Context;
 using BudgetBuddy.Service.Services.Transacoes;

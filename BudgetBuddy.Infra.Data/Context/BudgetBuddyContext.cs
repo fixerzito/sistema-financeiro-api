@@ -2,7 +2,6 @@
 using BudgetBuddy.Infra.Data.Mapping.ContasBancarias;
 using BudgetBuddy.Domain.Entities.BankAccounts;
 using BudgetBuddy.Domain.Entities.CreditCards;
-using BudgetBuddy.Domain.Entities.Transactions;
 using Microsoft.EntityFrameworkCore;
 using BudgetBuddy.Infra.Data.Mapping.Transacoes;
 

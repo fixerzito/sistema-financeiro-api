@@ -1,4 +1,5 @@
-﻿using BudgetBuddy.Domain.Entities.BankAccounts;
+﻿using BudgetBuddy.Domain.Dtos.Filters;
+using BudgetBuddy.Domain.Entities.BankAccounts;
 using BudgetBuddy.Infra.Data.Context;
 using Microsoft.EntityFrameworkCore;
 
@@ -29,8 +30,27 @@ namespace BudgetBuddy.Infra.Data.Repositories.ContasBancarias
             _context.SaveChanges();
         }
 
-        public List<CategoriaContaBancaria> GetAll()
+        public int Count()
         {
+            return _dbSet.Count();
+        }
+
+        public List<CategoriaContaBancaria> GetAll(TableFilter filtro)
+        {
+            var query = _dbSet.AsQueryable();
+            //if (!string.IsNullOrEmpty(filtro.Busca))
+            //    query = query.Where(x => x.Nome.Contains(filtro.Busca));
+            
+            //if (filtro.Ordenacao == Ordenacao.Asc)
+            //{
+            //    query = query.OrderBy(x => x.Nome);
+            //} else
+            //{
+            //    query = query.OrderByDescending(x => x.Nome);
+            //}
+
+            //query = query.Take(filtro.Quantidade).Skip(filtro.Pagina) ;
+
             return _dbSet.ToList();      
         }
 

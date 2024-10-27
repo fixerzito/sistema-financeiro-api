@@ -1,11 +1,4 @@
-﻿using BudgetBuddy.Domain.Entities.BankAccounts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BudgetBuddy.Domain.Dtos.Transacoes.Tables
+﻿namespace BudgetBuddy.Domain.Dtos.Transacoes.Tables
 {
     public class SubcategoriaTransacaoTableDto
     {
