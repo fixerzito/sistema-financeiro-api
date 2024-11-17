@@ -10,5 +10,6 @@ namespace BudgetBuddy.Domain.Interfaces
         int Add(ContaBancariaFormInsertDto dto);
         void Update(ContaBancariaFormUpdateDto dto);
         void Delete(int id);
+        public void UpdateSaldo(int id, decimal valor);
     }
 }

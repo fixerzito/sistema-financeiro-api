@@ -23,4 +23,16 @@
     <ProjectReference Include="..\BudgetBuddy.Domain\BudgetBuddy.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="Interfaces\Modelos\IModeloRepositorio\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="Interfaces\Modelos\IModeloRepositorio\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Interfaces\Modelos\IModeloRepositorio\**" />
+  </ItemGroup>
+
 </Project>

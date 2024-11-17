@@ -2,8 +2,7 @@
 using BudgetBuddy.Domain.Dtos.ContasBancarias.Tables;
 using BudgetBuddy.Domain.Entities.BankAccounts;
 using BudgetBuddy.Domain.Interfaces;
-using BudgetBuddy.Infra.Data.Context;
-using BudgetBuddy.Infra.Data.Repositories.ContasBancarias;
+using BudgetBuddy.Infra.Data.Interfaces.ContasBancarias;
 
 namespace BudgetBuddy.Service.Services.ContasBancarias
 {
@@ -11,10 +10,11 @@ namespace BudgetBuddy.Service.Services.ContasBancarias
     {
         private readonly IContaBancariaRepositorio _repositorio;
 
-        public ContaBancariaService(BudgetBuddyContext contexto)
+        public ContaBancariaService(IContaBancariaRepositorio repositorio)
         {
-            _repositorio = new ContaBancariaRepositorio(contexto);
+            _repositorio = repositorio;
         }
+
         public int Add(ContaBancariaFormInsertDto dto)
         {
             var conta = new ContaBancaria
@@ -34,6 +34,7 @@ namespace BudgetBuddy.Service.Services.ContasBancarias
             if (conta is null)
                 throw new Exception("Conta bancária não encontrada");
 
+            conta.RegistroAtivo = false;
             _repositorio.Delete(conta);
         }
 
@@ -87,6 +88,17 @@ namespace BudgetBuddy.Service.Services.ContasBancarias
             conta.Icon = dto.Icon;
             conta.IdCategoria = dto.IdCategoria;
 
+            _repositorio.Update(conta);
+        }
+        
+        public void UpdateSaldo(int id, decimal valor)
+        {
+            var conta = _repositorio.GetById(id);
+            if (conta is null)
+                throw new Exception("Conta bancária não encontrada");
+                
+            conta.Saldo += valor;
+            
             _repositorio.Update(conta);
         }
     }

@@ -45,8 +45,7 @@ namespace BudgetBuddy.Infra.Data.Migrations
                         .HasMaxLength(45)
                         .HasColumnType("nvarchar(45)");
 
-                    b.Property<bool?>("RegistroAtivo")
-                        .IsRequired()
+                    b.Property<bool>("RegistroAtivo")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("BIT")
                         .HasDefaultValue(true)
@@ -88,8 +87,7 @@ namespace BudgetBuddy.Infra.Data.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<bool?>("RegistroAtivo")
-                        .IsRequired()
+                    b.Property<bool>("RegistroAtivo")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("BIT")
                         .HasDefaultValue(true)
@@ -145,8 +143,7 @@ namespace BudgetBuddy.Infra.Data.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<bool?>("RegistroAtivo")
-                        .IsRequired()
+                    b.Property<bool>("RegistroAtivo")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("BIT")
                         .HasDefaultValue(true)
@@ -185,8 +182,7 @@ namespace BudgetBuddy.Infra.Data.Migrations
                         .HasMaxLength(45)
                         .HasColumnType("nvarchar(45)");
 
-                    b.Property<bool?>("RegistroAtivo")
-                        .IsRequired()
+                    b.Property<bool>("RegistroAtivo")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("BIT")
                         .HasDefaultValue(true)
@@ -205,7 +201,7 @@ namespace BudgetBuddy.Infra.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("Categoria")
+                    b.Property<int>("CategoriaTransacaoId")
                         .HasColumnType("int");
 
                     b.Property<int?>("CriadoPor")
@@ -223,8 +219,7 @@ namespace BudgetBuddy.Infra.Data.Migrations
                         .HasMaxLength(45)
                         .HasColumnType("nvarchar(45)");
 
-                    b.Property<bool?>("RegistroAtivo")
-                        .IsRequired()
+                    b.Property<bool>("RegistroAtivo")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("BIT")
                         .HasDefaultValue(true)
@@ -232,9 +227,55 @@ namespace BudgetBuddy.Infra.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Categoria");
+                    b.HasIndex("CategoriaTransacaoId");
 
                     b.ToTable("subcategoria_transacoes", (string)null);
+                });
+
+            modelBuilder.Entity("BudgetBuddy.Domain.Entities.Transactions.Transacao", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CriadoPor")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DataHoraCriacao")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("IdContaBancaria")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IdSubcategoriaTransacao")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("RegistroAtivo")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("BIT")
+                        .HasDefaultValue(true)
+                        .HasColumnName("registro_ativo");
+
+                    b.Property<int>("TipoTransacao")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Valor")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdContaBancaria");
+
+                    b.HasIndex("IdSubcategoriaTransacao");
+
+                    b.ToTable("transacoes", (string)null);
                 });
 
             modelBuilder.Entity("BudgetBuddy.Domain.Entities.BankAccounts.ContaBancaria", b =>
@@ -258,11 +299,32 @@ namespace BudgetBuddy.Infra.Data.Migrations
 
             modelBuilder.Entity("BudgetBuddy.Domain.Entities.Transactions.SubcategoriaTransacao", b =>
                 {
-                    b.HasOne("BudgetBuddy.Domain.Entities.Transactions.CategoriaTransacao", null)
+                    b.HasOne("BudgetBuddy.Domain.Entities.Transactions.CategoriaTransacao", "CategoriaTransacao")
                         .WithMany()
-                        .HasForeignKey("Categoria")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("CategoriaTransacaoId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("CategoriaTransacao");
+                });
+
+            modelBuilder.Entity("BudgetBuddy.Domain.Entities.Transactions.Transacao", b =>
+                {
+                    b.HasOne("BudgetBuddy.Domain.Entities.BankAccounts.ContaBancaria", "ContaBancaria")
+                        .WithMany()
+                        .HasForeignKey("IdContaBancaria")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BudgetBuddy.Domain.Entities.Transactions.SubcategoriaTransacao", "SubcategoriaTransacao")
+                        .WithMany()
+                        .HasForeignKey("IdSubcategoriaTransacao")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ContaBancaria");
+
+                    b.Navigation("SubcategoriaTransacao");
                 });
 #pragma warning restore 612, 618
         }

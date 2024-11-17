@@ -1,20 +1,18 @@
 ﻿using BudgetBuddy.Domain.Dtos.CartoesCredito.Forms;
 using BudgetBuddy.Domain.Interfaces;
-using BudgetBuddy.Infra.Data.Context;
-using BudgetBuddy.Service.Services.CartoesCredito;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BudgetBuddy.Application.Controllers.CartoesCredito
 {
+    [Route("api/cartoes")]
     [ApiController]
-    [Route("cartoes")]
     public class CartaoCreditoController : Controller
     {
         private readonly ICartaoCreditoService _service;
 
-        public CartaoCreditoController(BudgetBuddyContext contexto)
+        public CartaoCreditoController(ICartaoCreditoService service)
         {
-            _service = new CartaoCreditoService(contexto);
+            _service = service;
         }
 
         [HttpGet]
@@ -47,7 +45,7 @@ namespace BudgetBuddy.Application.Controllers.CartoesCredito
             return CreatedAtAction(nameof(Consultar), new { id = id }, dto);
         }
 
-        [HttpDelete("{id}")]
+        [HttpPatch("{id}")]
         public IActionResult Apagar(int id)
         {
             try
@@ -55,7 +53,7 @@ namespace BudgetBuddy.Application.Controllers.CartoesCredito
                 _service.Delete(id);
                 return NoContent();
             }
-            catch (Exception ex)
+            catch 
             {
                 return BadRequest();
             }
@@ -69,7 +67,7 @@ namespace BudgetBuddy.Application.Controllers.CartoesCredito
                 _service.Update(dto);
                 return NoContent();
             }
-            catch (Exception ex)
+            catch 
             {
                 return BadRequest();
             }

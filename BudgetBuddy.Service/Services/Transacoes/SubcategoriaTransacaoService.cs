@@ -1,9 +1,9 @@
-﻿using BudgetBuddy.Domain.Dtos.Transacoes.Forms;
+﻿using BudgetBuddy.Domain.Dtos.Transacoes.Dropdown;
+using BudgetBuddy.Domain.Dtos.Transacoes.Forms;
 using BudgetBuddy.Domain.Dtos.Transacoes.Tables;
 using BudgetBuddy.Domain.Entities.Transactions;
 using BudgetBuddy.Domain.Interfaces;
-using BudgetBuddy.Infra.Data.Context;
-using BudgetBuddy.Infra.Data.Repositories.Transacoes;
+using BudgetBuddy.Infra.Data.Interfaces.Transacoes;
 
 namespace BudgetBuddy.Service.Services.Transacoes
 {
@@ -11,9 +11,9 @@ namespace BudgetBuddy.Service.Services.Transacoes
     {
         private readonly ISubcategoriaTransacaoRepositorio _repositorio;
 
-        public SubcategoriaTransacaoService(BudgetBuddyContext contexto)
+        public SubcategoriaTransacaoService(ISubcategoriaTransacaoRepositorio repositorio)
         {
-            _repositorio = new SubcategoriaTransacaoRepositorio(contexto);
+            _repositorio = repositorio;
         }
 
         public int Add(SubcategoriaTransacaoFormInsertDto dto)
@@ -21,7 +21,7 @@ namespace BudgetBuddy.Service.Services.Transacoes
             var subcategoria = new SubcategoriaTransacao
             {
                 Nome = dto.Nome,
-                Categoria = dto.Categoria
+                CategoriaTransacaoId = dto.Categoria
             };
 
             _repositorio.Add(subcategoria);
@@ -35,7 +35,27 @@ namespace BudgetBuddy.Service.Services.Transacoes
             {
                 throw new Exception("Subcategoria não encontrada");
             }
+            subcategoria.RegistroAtivo = false;
             _repositorio.Delete(subcategoria);
+        }
+
+        public IList<SubcategoriaTransacaoDropdownDto> GetByCategoriaId(int categoriaId)
+        {
+            var subcategorias = _repositorio.GetByCategoriaId(categoriaId);
+            var dtos = new List<SubcategoriaTransacaoDropdownDto>();
+
+            foreach (var subcategoria in subcategorias)
+            {
+                var dto = new SubcategoriaTransacaoDropdownDto
+                {
+                    Id = subcategoria.Id,
+                    Nome = subcategoria.Nome
+                };
+
+                dtos.Add(dto);
+            }
+
+            return dtos;
         }
 
         public List<SubcategoriaTransacaoTableDto> GetAll()
@@ -49,7 +69,7 @@ namespace BudgetBuddy.Service.Services.Transacoes
                 {
                     Id = subcategoria.Id,
                     Nome = subcategoria.Nome,
-                    Categoria = subcategoria.Categoria
+                    Categoria = subcategoria.CategoriaTransacaoId
                 };
 
                 dtos.Add(dto);
@@ -70,7 +90,7 @@ namespace BudgetBuddy.Service.Services.Transacoes
             {
                 Id = subcategoria.Id,
                 Nome = subcategoria.Nome,
-                Categoria = subcategoria.Categoria
+                Categoria = subcategoria.CategoriaTransacaoId
             };
         }
 
@@ -83,7 +103,7 @@ namespace BudgetBuddy.Service.Services.Transacoes
             }
 
             subcategoria.Nome = dto.Nome;
-            subcategoria.Categoria = dto.Categoria;
+            subcategoria.CategoriaTransacaoId = dto.Categoria;
             _repositorio.Update(subcategoria);
         }
     }

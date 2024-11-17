@@ -1,20 +1,18 @@
 ﻿using BudgetBuddy.Domain.Dtos.Transacoes.Forms;
 using BudgetBuddy.Domain.Interfaces;
-using BudgetBuddy.Infra.Data.Context;
-using BudgetBuddy.Service.Services.Transacoes;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BudgetBuddy.Application.Controllers.Transacoes
 {
+    [Route("api/categorias-transacao")]
     [ApiController]
-    [Route("/categorias-transacao")]
     public class CategoriaTransacaoController : Controller
     {
         private readonly ICategoriaTransacaoService _service;
 
-        public CategoriaTransacaoController(BudgetBuddyContext contexto)
+        public CategoriaTransacaoController(ICategoriaTransacaoService service)
         {
-            _service = new CategoriaTransacaoService(contexto);
+            _service = service;
         }
 
         [HttpGet]
@@ -45,7 +43,7 @@ namespace BudgetBuddy.Application.Controllers.Transacoes
                 _service.Update(dto);
                 return NoContent();
             }
-            catch (Exception ex)
+            catch 
             {
                 return BadRequest();
             }
@@ -60,7 +58,7 @@ namespace BudgetBuddy.Application.Controllers.Transacoes
             return CreatedAtAction(nameof(Consultar), new { id = id }, dto);
         }
 
-        [HttpDelete("{id}")]
+        [HttpPatch("{id}")]
         public IActionResult Apagar(int id)
         {
             try
@@ -68,7 +66,7 @@ namespace BudgetBuddy.Application.Controllers.Transacoes
                 _service.Delete(id);
                 return NoContent();
             }
-            catch (Exception ex)
+            catch 
             {
                 return BadRequest();
             }

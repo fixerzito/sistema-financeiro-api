@@ -1,20 +1,18 @@
 ﻿using BudgetBuddy.Domain.Dtos.Transacoes.Forms;
 using BudgetBuddy.Domain.Interfaces;
-using BudgetBuddy.Infra.Data.Context;
-using BudgetBuddy.Service.Services.Transacoes;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BudgetBuddy.Application.Controllers.Transacoes
 {
+    [Route("api/subcategorias-transacao")]
     [ApiController]
-    [Route("subcategorias-transacao")]
     public class SubcategoriaTransacaoController : Controller
     {
         private readonly ISubcategoriaTransacaoService _service;
 
-        public SubcategoriaTransacaoController(BudgetBuddyContext contexto)
+        public SubcategoriaTransacaoController(ISubcategoriaTransacaoService service)
         {
-            _service = new SubcategoriaTransacaoService(contexto);
+            _service = service;
         }
 
         [HttpGet]
@@ -37,7 +35,7 @@ namespace BudgetBuddy.Application.Controllers.Transacoes
             return Ok(dto);
         }
 
-        [HttpDelete("{id}")]
+        [HttpPatch("{id}")]
         public IActionResult Apagar(int id)
         {
             try
@@ -45,7 +43,7 @@ namespace BudgetBuddy.Application.Controllers.Transacoes
                 _service.Delete(id);
                 return NoContent();
             }
-            catch (Exception ex)
+            catch 
             {
                 return BadRequest();
             }
@@ -67,10 +65,22 @@ namespace BudgetBuddy.Application.Controllers.Transacoes
                 _service.Update(dto);
                 return NoContent();
             }
-            catch (Exception ex)
+            catch 
             {
                 return BadRequest();
             }
+        }
+        
+        [HttpGet("dropdown/{categoriaId}")]
+        public IActionResult ConsultarDropdownPorCategoriaId(int categoriaId)
+        {
+            var dto = _service.GetByCategoriaId(categoriaId);
+            if (dto is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(dto);
         }
     }
 }

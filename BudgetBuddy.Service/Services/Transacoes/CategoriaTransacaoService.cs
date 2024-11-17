@@ -2,8 +2,7 @@
 using BudgetBuddy.Domain.Dtos.Transacoes.Tables;
 using BudgetBuddy.Domain.Entities.Transactions;
 using BudgetBuddy.Domain.Interfaces;
-using BudgetBuddy.Infra.Data.Context;
-using BudgetBuddy.Infra.Data.Repositories.Transacoes;
+using BudgetBuddy.Infra.Data.Interfaces.Transacoes;
 
 namespace BudgetBuddy.Service.Services.Transacoes
 {
@@ -11,9 +10,9 @@ namespace BudgetBuddy.Service.Services.Transacoes
     {
         private readonly ICategoriaTransacaoRepositorio _repositorio;
 
-        public CategoriaTransacaoService(BudgetBuddyContext contexto)
+        public CategoriaTransacaoService(ICategoriaTransacaoRepositorio repositorio)
         {
-            _repositorio = new CategoriaTransacaoRepositorio(contexto);
+            _repositorio = repositorio;
         }
 
         public int Add(CategoriaTransacaoFormInsertDto dto)
@@ -34,6 +33,7 @@ namespace BudgetBuddy.Service.Services.Transacoes
             {
                 throw new Exception("Categoria não encontrada");
             }
+            categoria.RegistroAtivo = false;
             _repositorio.Delete(categoria);
         }
 

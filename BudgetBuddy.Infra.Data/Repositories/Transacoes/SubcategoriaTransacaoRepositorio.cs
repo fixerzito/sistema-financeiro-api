@@ -1,50 +1,24 @@
 ﻿using BudgetBuddy.Domain.Entities.Transactions;
 using BudgetBuddy.Infra.Data.Context;
+using BudgetBuddy.Infra.Data.Interfaces.Transacoes;
 using Microsoft.EntityFrameworkCore;
 
 namespace BudgetBuddy.Infra.Data.Repositories.Transacoes
 {
-    public class SubcategoriaTransacaoRepositorio : ISubcategoriaTransacaoRepositorio
+    public class SubcategoriaTransacaoRepositorio : RepositorioBase<SubcategoriaTransacao>, ISubcategoriaTransacaoRepositorio
     {
         private readonly BudgetBuddyContext _contexto;
         private readonly DbSet<SubcategoriaTransacao> _dbSet;
-
-        public SubcategoriaTransacaoRepositorio(BudgetBuddyContext contexto)
+        
+        public SubcategoriaTransacaoRepositorio(BudgetBuddyContext contexto) : base(contexto)
         {
             _contexto = contexto;
             _dbSet = _contexto.Set<SubcategoriaTransacao>();
-
         }
 
-        public SubcategoriaTransacao Add(SubcategoriaTransacao subcategoria)
+        public IList<SubcategoriaTransacao> GetByCategoriaId(int categoriaId)
         {
-            _dbSet.Add(subcategoria);
-            _contexto.SaveChanges();
-
-            return subcategoria;
-        }
-
-        public void Delete(SubcategoriaTransacao subcategoria)
-        {
-            _dbSet.Remove(subcategoria);
-            _contexto.SaveChanges();
-        }
-
-        // TODO: Trocar para interface
-        public List<SubcategoriaTransacao> GetAll()
-        {
-            return _dbSet.ToList();
-        }
-
-        public SubcategoriaTransacao? GetById(int id)
-        {
-            return _dbSet.FirstOrDefault(x => x.Id == id);
-        }
-
-        public void Update(SubcategoriaTransacao subcategoria)
-        {
-            _dbSet.Update(subcategoria);
-            _contexto.SaveChanges();
+            return _dbSet.Include(x => x.CategoriaTransacao).Where(x => x.CategoriaTransacaoId == categoriaId).ToList();
         }
     }
 }

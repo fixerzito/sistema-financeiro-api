@@ -2,8 +2,7 @@
 using BudgetBuddy.Domain.Dtos.CartoesCredito.Tables;
 using BudgetBuddy.Domain.Entities.CreditCards;
 using BudgetBuddy.Domain.Interfaces;
-using BudgetBuddy.Infra.Data.Context;
-using BudgetBuddy.Infra.Data.Repositories.CartoesCredito;
+using BudgetBuddy.Infra.Data.Interfaces.CartoesCredito;
 
 namespace BudgetBuddy.Service.Services.CartoesCredito
 {
@@ -11,9 +10,9 @@ namespace BudgetBuddy.Service.Services.CartoesCredito
     {
         private readonly ICartaoCreditoRepositorio _repositorio;
 
-        public CartaoCreditoService(BudgetBuddyContext contexto)
+        public CartaoCreditoService(ICartaoCreditoRepositorio repositorio)
         {
-            _repositorio = new CartaoCreditoRepositorio(contexto);
+            _repositorio = repositorio;
         }
 
         public int Add(CartaoCreditoFormInsertDto dto)
@@ -38,6 +37,7 @@ namespace BudgetBuddy.Service.Services.CartoesCredito
             if (cartao is null)
                 throw new Exception("Cartão de crédito não encontrado");
 
+            cartao.RegistroAtivo = false;
             _repositorio.Delete(cartao);
         }
 
@@ -57,7 +57,7 @@ namespace BudgetBuddy.Service.Services.CartoesCredito
                     Limite = cartao.Limite,
                     DiaFechamento = cartao.DiaFechamento,
                     DiaVencimento = cartao.DiaVencimento,
-                    ContaVinculada = cartao.ContaBancaria.Nome,
+                    ContaVinculada = cartao.ContaBancaria?.Nome,
                 };
 
                 dtos.Add(dto);

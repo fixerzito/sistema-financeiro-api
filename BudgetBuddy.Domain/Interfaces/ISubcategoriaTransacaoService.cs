@@ -1,4 +1,5 @@
-﻿using BudgetBuddy.Domain.Dtos.Transacoes.Forms;
+﻿using BudgetBuddy.Domain.Dtos.Transacoes.Dropdown;
+using BudgetBuddy.Domain.Dtos.Transacoes.Forms;
 using BudgetBuddy.Domain.Dtos.Transacoes.Tables;
 
 namespace BudgetBuddy.Domain.Interfaces
@@ -10,5 +11,6 @@ namespace BudgetBuddy.Domain.Interfaces
         int Add(SubcategoriaTransacaoFormInsertDto dto);
         void Update(SubcategoriaTransacaoFormUpdateDto dto);
         void Delete(int id);
+        IList<SubcategoriaTransacaoDropdownDto> GetByCategoriaId(int categoriaId);
     }
 }
