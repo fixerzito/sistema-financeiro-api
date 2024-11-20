@@ -10,7 +10,7 @@ namespace BudgetBuddy.Infra.Data.Context
 {
     public class BudgetBuddyContext : DbContext
     {
-        // dotnet ef migrations add AlteradoColunasTabelaTransacoes --project BudgetBuddy.Infra.Data --startup-project BudgetBuddy.Application
+        // dotnet ef migrations add PopulandoBD2 --project BudgetBuddy.Infra.Data --startup-project BudgetBuddy.Application
         // dotnet ef database update --project BudgetBuddy.Infra.Data --startup-project BudgetBuddy.Application
         //dotnet ef migrations remove --project BudgetBuddy.Infra.Data --startup-project BudgetBuddy.Application
 

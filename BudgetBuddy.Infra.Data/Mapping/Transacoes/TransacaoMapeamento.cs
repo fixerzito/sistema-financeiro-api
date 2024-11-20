@@ -53,6 +53,7 @@ namespace BudgetBuddy.Infra.Data.Mapping.Transacoes
               .WithMany()
               .OnDelete(DeleteBehavior.Restrict)
               .HasForeignKey(x => x.IdSubcategoriaTransacao);
+            
         }
     }
 }

@@ -39,8 +39,6 @@ builder.Services.AddScoped<ICartaoCreditoRepositorio, CartaoCreditoRepositorio>(
 builder.Services.AddScoped<IContaBancariaRepositorio, ContaBancariaRepositorio>();
 builder.Services.AddScoped<ITransacaoRepositorio, TransacaoRepositorio>();
 
-
-
 builder.Services.AddDbContext<BudgetBuddyContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer")));
 
