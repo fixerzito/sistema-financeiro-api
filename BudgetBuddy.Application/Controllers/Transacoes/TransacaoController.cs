@@ -47,13 +47,6 @@ namespace BudgetBuddy.Application.Controllers.Transacoes
         {
             var id = _service.Add(dto);
 
-            if (dto.TipoTransacao == 2)
-            {
-                dto.Valor = -(dto.Valor); 
-            }
-            
-            _contaBancariaService.UpdateSaldo(dto.IdContaBancaria, dto.Valor);
-
             return CreatedAtAction(nameof(Consultar), new { id = id }, dto);
         }
 
@@ -62,7 +55,7 @@ namespace BudgetBuddy.Application.Controllers.Transacoes
         {
             var transacaoApagar = _service.GetById(id);
             var variavelAlteracao = -1;
-            if (transacaoApagar.TipoTransacao == 2)
+            if (transacaoApagar.TipoTransacao is TipoTransacao.Saida)
             {
                 variavelAlteracao = 1;
             }
@@ -88,6 +81,9 @@ namespace BudgetBuddy.Application.Controllers.Transacoes
                 var dto = new TransacaoFormUpdateDto
                 {
                     Id = id,
+                    Status = viewModel.Status.GetValueOrDefault(),
+                    DataPrevista = viewModel.DataPrevista.HasValue ? viewModel.DataPrevista.Value : null,
+                    DataEfetivacao = viewModel.DataEfetivacao.HasValue ? viewModel.DataEfetivacao.Value : null,
                     IdSubcategoriaTransacao = viewModel.IdSubcategoriaTransacao.GetValueOrDefault(),
                     IdContaBancaria = viewModel.IdContaBancaria.GetValueOrDefault(),
                     TipoTransacao = (TipoTransacao)Enum.ToObject(typeof(TipoTransacao), viewModel.TipoTransacao!),

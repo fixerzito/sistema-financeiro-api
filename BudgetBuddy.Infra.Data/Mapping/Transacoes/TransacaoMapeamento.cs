@@ -23,10 +23,20 @@ namespace BudgetBuddy.Infra.Data.Mapping.Transacoes
             builder.Property(x => x.TipoTransacao)
                 .IsRequired()
                 .HasColumnType("int");
+            
+            builder.Property(x => x.Status)
+                .IsRequired()
+                .HasColumnType("BIT");
 
             builder.Property(x => x.Valor)
                 .IsRequired()
                 .HasColumnType("decimal(18, 2)");
+            
+            builder.Property(t => t.DataPrevista)
+                .HasColumnType("datetime2");
+
+            builder.Property(t => t.DataEfetivacao)
+                .HasColumnType("datetime2");
 
             builder.Property(x => x.RegistroAtivo)
                .IsRequired()

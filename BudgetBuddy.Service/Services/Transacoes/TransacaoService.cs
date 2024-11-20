@@ -26,18 +26,30 @@ namespace BudgetBuddy.Service.Services.Transacoes
             {
                 Nome = dto.Nome,
                 Valor = dto.Valor,
+                Status = dto.Status,
+                DataPrevista = dto.DataPrevista.HasValue ? dto.DataPrevista.Value : (DateTime?)null,
+                DataEfetivacao = dto.DataEfetivacao.HasValue ? dto.DataEfetivacao.Value : (DateTime?)null,
                 TipoTransacao = (TipoTransacao)Enum.ToObject(typeof(TipoTransacao), dto.TipoTransacao),
                 IdContaBancaria = dto.IdContaBancaria,
                 IdSubcategoriaTransacao = dto.IdSubcategoriaTransacao
             };
+            
+            if (transacao.Status)
+            {
+                if (transacao.TipoTransacao == TipoTransacao.Entrada)
+                {
+                    _contaBancariaService.UpdateSaldo(transacao.IdContaBancaria, transacao.Valor);
+                }
+                else if(transacao.TipoTransacao == TipoTransacao.Saida)
+                {
+                    _contaBancariaService.UpdateSaldo(transacao.IdContaBancaria, -transacao.Valor); 
+                }
+            }
 
             _repositorio.Add(transacao);
             return transacao.Id;
         }
-
-
         
-
         public void Delete(int id)
         {
             var transacao = _repositorio.GetById(id);
@@ -69,6 +81,9 @@ namespace BudgetBuddy.Service.Services.Transacoes
                     Id = transacao.Id,
                     Nome = transacao.Nome,
                     Valor = transacao.Valor,
+                    Status = transacao.Status,
+                    DataPrevista = transacao.DataPrevista.HasValue ? transacao.DataPrevista.Value : (DateTime?)null,
+                    DataEfetivacao = transacao.DataEfetivacao.HasValue ? transacao.DataEfetivacao.Value : (DateTime?)null,
                     TipoTransacao = tipoTransacaoString,
                     ContaBancaria = transacao.ContaBancaria.Nome,
                     SubcategoriaTransacao = transacao.SubcategoriaTransacao.Nome,
@@ -92,6 +107,9 @@ namespace BudgetBuddy.Service.Services.Transacoes
                     Id = transacao.Id,
                     Nome = transacao.Nome,
                     Valor = transacao.Valor,
+                    Status = transacao.Status,
+                    DataPrevista = transacao.DataPrevista.HasValue ? transacao.DataPrevista.Value : (DateTime?)null,
+                    DataEfetivacao = transacao.DataEfetivacao.HasValue ? transacao.DataEfetivacao.Value : (DateTime?)null,
                     TipoTransacao = transacao.TipoTransacao,
                     IdContaBancaria = transacao.IdContaBancaria,
                     IdSubcategoriaTransacao = transacao.IdSubcategoriaTransacao,
@@ -104,22 +122,48 @@ namespace BudgetBuddy.Service.Services.Transacoes
             var transacao = _repositorio.GetById(dto.Id);
             if (transacao is null)
                 throw new Exception("Transação não encontrada");
+            
+            if (dto.Status != transacao.Status)
+            {
+                if (transacao.TipoTransacao == TipoTransacao.Entrada)
+                {
+                    if(dto.Status)
+                        _contaBancariaService.UpdateSaldo(dto.IdContaBancaria, dto.Valor);
+                    else
+                        _contaBancariaService.UpdateSaldo(transacao.IdContaBancaria, -transacao.Valor);
+                }
+                else if(transacao.TipoTransacao == TipoTransacao.Saida)
+                {
+                    if(dto.Status)
+                        _contaBancariaService.UpdateSaldo(dto.IdContaBancaria, -dto.Valor);
+                    else
+                        _contaBancariaService.UpdateSaldo(transacao.IdContaBancaria, transacao.Valor);
+                }
+            }
+
+            if (dto.Status)
+            {
+                UpdateSaldo(dto);
+            }
 
             transacao.Nome = dto.Nome;
             transacao.Valor = dto.Valor;
+            transacao.Status = dto.Status;
+            transacao.DataPrevista = dto.DataPrevista;
+            transacao.DataEfetivacao = dto.DataEfetivacao;
             transacao.TipoTransacao = (TipoTransacao)Enum.ToObject(typeof(TipoTransacao), dto.TipoTransacao);
             transacao.IdSubcategoriaTransacao = dto.IdSubcategoriaTransacao;
             transacao.IdContaBancaria = dto.IdContaBancaria;
-
+            
             _repositorio.Update(transacao);
         }
 
 
-        private void x(TransacaoFormUpdateDto dto)
+        private void UpdateSaldo(TransacaoFormUpdateDto dto)
         {
             var transacaoExistente = GetById(dto.Id);
             
-            if (transacaoExistente.Valor != dto.Valor ||
+            if (transacaoExistente!.Valor != dto.Valor ||
                 transacaoExistente.TipoTransacao != dto.TipoTransacao ||
                 transacaoExistente.IdContaBancaria != dto.IdContaBancaria)
             {

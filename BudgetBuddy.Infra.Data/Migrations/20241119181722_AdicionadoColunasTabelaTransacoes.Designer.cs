@@ -4,6 +4,7 @@ using BudgetBuddy.Infra.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BudgetBuddy.Infra.Data.Migrations
 {
     [DbContext(typeof(BudgetBuddyContext))]
-    partial class BudgetBuddyContextModelSnapshot : ModelSnapshot
+    [Migration("20241119181722_AdicionadoColunasTabelaTransacoes")]
+    partial class AdicionadoColunasTabelaTransacoes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -243,13 +246,13 @@ namespace BudgetBuddy.Infra.Data.Migrations
                     b.Property<int?>("CriadoPor")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("DataEfetivacao")
+                    b.Property<DateTime>("DataEfetivacao")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("DataHoraCriacao")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("DataPrevista")
+                    b.Property<DateTime>("DataPrevista")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("IdContaBancaria")
