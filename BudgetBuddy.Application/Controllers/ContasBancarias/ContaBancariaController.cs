@@ -1,20 +1,18 @@
 ﻿using BudgetBuddy.Domain.Dtos.ContasBancarias.Forms;
 using BudgetBuddy.Domain.Interfaces;
-using BudgetBuddy.Infra.Data.Context;
-using BudgetBuddy.Service.Services.ContasBancarias;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BudgetBuddy.Application.Controllers.ContasBancarias
 {
+    [Route("api/contas")]
     [ApiController]
-    [Route("/contas")]
     public class ContaBancariaController : Controller
     {
         private readonly IContaBancariaService _service;
 
-        public ContaBancariaController(BudgetBuddyContext contexto)
+        public ContaBancariaController(IContaBancariaService service)
         {
-            _service = new ContaBancariaService(contexto);
+            _service = service;
         }
 
         [HttpGet]
@@ -47,7 +45,7 @@ namespace BudgetBuddy.Application.Controllers.ContasBancarias
             return CreatedAtAction(nameof(Consultar), new { id = id }, dto);
         }
 
-        [HttpDelete("{id}")]
+        [HttpPatch("{id}")]
         public IActionResult Apagar(int id)
         {
             try
@@ -55,7 +53,7 @@ namespace BudgetBuddy.Application.Controllers.ContasBancarias
                 _service.Delete(id);
                 return NoContent();
             }
-            catch (Exception ex)
+            catch 
             {
                 return BadRequest();
             }
@@ -69,7 +67,7 @@ namespace BudgetBuddy.Application.Controllers.ContasBancarias
                 _service.Update(dto);
                 return NoContent();
             }
-            catch (Exception ex)
+            catch 
             {
                 return BadRequest();
             }

@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using BudgetBuddy.Domain.Entities.Usuarios;
 
 namespace BudgetBuddy.Domain.Entities.Transactions
 {
     public class SubcategoriaTransacao : EntityBase
     {
         public string Nome { get; set; }
-        public int Categoria { get; set; }
+        public int CategoriaTransacaoId { get; set; }
+        public CategoriaTransacao CategoriaTransacao { get; set; }
+        public Usuario? Usuario { get; set; }
     }
 }

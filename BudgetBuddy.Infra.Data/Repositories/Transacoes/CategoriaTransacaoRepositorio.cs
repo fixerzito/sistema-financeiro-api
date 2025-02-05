@@ -1,48 +1,19 @@
 ﻿using BudgetBuddy.Domain.Entities.Transactions;
 using BudgetBuddy.Infra.Data.Context;
+using BudgetBuddy.Infra.Data.Interfaces.Transacoes;
 using Microsoft.EntityFrameworkCore;
 
 namespace BudgetBuddy.Infra.Data.Repositories.Transacoes
 {
-    public class CategoriaTransacaoRepositorio : ICategoriaTransacaoRepositorio
+    public class CategoriaTransacaoRepositorio : RepositorioBase<CategoriaTransacao>, ICategoriaTransacaoRepositorio
     {
-        private readonly BudgetBuddyContext _contexto;
-        private readonly DbSet<CategoriaTransacao> _dbSet;
-
-        public CategoriaTransacaoRepositorio(BudgetBuddyContext contexto)
+        public CategoriaTransacaoRepositorio(BudgetBuddyContext contexto) : base(contexto)
         {
-            _contexto = contexto;
-            _dbSet = _contexto.Set<CategoriaTransacao>();
         }
-
-        public CategoriaTransacao Add(CategoriaTransacao categoria)
+        
+        public async Task<bool> IsCategoriaExistente(string nome)
         {
-            _dbSet.Add(categoria);
-            _contexto.SaveChanges();
-
-            return categoria;
-        }
-
-        public void Delete(CategoriaTransacao categoria)
-        {
-            _dbSet.Remove(categoria);
-            _contexto.SaveChanges();
-        }
-
-        public List<CategoriaTransacao> GetAll()
-        {
-            return _dbSet.ToList();
-        }
-
-        public CategoriaTransacao? GetById(int id)
-        {
-            return _dbSet.FirstOrDefault(x => x.Id == id);
-        }
-
-        public void Update(CategoriaTransacao categoria)
-        {
-            _dbSet.Update(categoria);
-            _contexto.SaveChanges();
+            return await _dbSet.AnyAsync(c => c.Nome == nome);  
         }
     }
 }

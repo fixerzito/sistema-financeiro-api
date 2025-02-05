@@ -48,6 +48,10 @@ namespace BudgetBuddy.Infra.Data.Mapping.CartoesCredito
                .WithMany()
                .OnDelete(DeleteBehavior.SetNull)
                .HasForeignKey(cartao => cartao.IdContaVinculada);
+            
+            builder.HasOne(x => x.Usuario) 
+                .WithMany()
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

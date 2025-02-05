@@ -1,28 +1,34 @@
-﻿using BudgetBuddy.Domain.Dtos.ContasBancarias.Forms;
+﻿
+using BudgetBuddy.Domain.Dtos.ContasBancarias.Forms;
 using BudgetBuddy.Domain.Interfaces;
-using BudgetBuddy.Infra.Data.Context;
-using BudgetBuddy.Service.Services.ContasBancarias;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BudgetBuddy.Application.Controllers.ContasBancarias
 {
+    [Route("api/categorias-contas-bancarias")]
     [ApiController]
-    [Route("/categorias-contas-bancarias")]
     public class CategoriaContaBancariaController : Controller
     {
         private readonly ICategoriaContaBancariaService _service;
 
-        public CategoriaContaBancariaController(BudgetBuddyContext contexto)
+        public CategoriaContaBancariaController(ICategoriaContaBancariaService service)
         {
-            _service = new CategoriaContaBancariaService(contexto);
+            _service = service;
         }
 
         [HttpGet]
         public IActionResult Consultar()
         {
-            var dtos = _service.GetAll();
+            var result = _service.GetAll();
+            //var result = await _service.GetAllAsync(filtro);
 
-            return Ok(dtos);
+            //var response = new
+            //{
+            //    Dados = result.Data,
+            //    QuantidadeRegistros = result.TotalRecords
+            //};
+
+            return Ok(result);
         }
 
         [HttpGet("{id}")]
@@ -43,7 +49,7 @@ namespace BudgetBuddy.Application.Controllers.ContasBancarias
         {
             var id = _service.Add(dto);
 
-            return CreatedAtAction(nameof(Consultar), new { id = id}, dto);
+            return CreatedAtAction(nameof(Consultar), new { id = id}, new {id});
         }
 
         [HttpDelete("{id}")]
@@ -54,7 +60,7 @@ namespace BudgetBuddy.Application.Controllers.ContasBancarias
                 _service.Delete(id);
             return NoContent();
             }
-            catch (Exception ex)
+            catch 
             {
                 return BadRequest();
             }
@@ -68,7 +74,7 @@ namespace BudgetBuddy.Application.Controllers.ContasBancarias
                 _service.Update(dto);
                 return NoContent();
             }
-            catch (Exception ex)
+            catch 
             {
                 return BadRequest();
             }

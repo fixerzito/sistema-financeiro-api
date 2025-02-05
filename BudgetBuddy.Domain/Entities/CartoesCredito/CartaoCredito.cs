@@ -1,4 +1,5 @@
 ﻿using BudgetBuddy.Domain.Entities.BankAccounts;
+using BudgetBuddy.Domain.Entities.Usuarios;
 
 namespace BudgetBuddy.Domain.Entities.CreditCards
 {
@@ -12,5 +13,6 @@ namespace BudgetBuddy.Domain.Entities.CreditCards
         public int DiaVencimento { get; set; }
         public int? IdContaVinculada { get; set; }
         public virtual ContaBancaria? ContaBancaria { get; set; }
+        public Usuario? Usuario { get; set; }
     }
 }

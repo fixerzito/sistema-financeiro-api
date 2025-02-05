@@ -3,8 +3,7 @@
     public class EntityBase
     {
         public int Id { get; set; }
-        public bool? RegistroAtivo { get; set; }
-        public int? CriadoPor { get; set; }
+        public bool RegistroAtivo { get; set; } = true;
         public DateTime? DataHoraCriacao { get; set; }
     }
 }

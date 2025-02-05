@@ -2,8 +2,7 @@
 using BudgetBuddy.Domain.Dtos.ContasBancarias.Tables;
 using BudgetBuddy.Domain.Entities.BankAccounts;
 using BudgetBuddy.Domain.Interfaces;
-using BudgetBuddy.Infra.Data.Context;
-using BudgetBuddy.Infra.Data.Repositories.ContasBancarias;
+using BudgetBuddy.Infra.Data.Interfaces.ContasBancarias;
 
 namespace BudgetBuddy.Service.Services.ContasBancarias
 {
@@ -11,9 +10,9 @@ namespace BudgetBuddy.Service.Services.ContasBancarias
     {
         private readonly ICategoriaContaBancariaRepositorio _repository;
 
-        public CategoriaContaBancariaService(BudgetBuddyContext contexto)
+        public CategoriaContaBancariaService(ICategoriaContaBancariaRepositorio repository)
         {
-            _repository = new CategoriaContaBancariaRepositorio(contexto);
+            _repository = repository;
         }
 
         public int Add(CategoriaContaBancariaFormInsertDto dto)
@@ -32,6 +31,7 @@ namespace BudgetBuddy.Service.Services.ContasBancarias
             if (categoria is null)
                 throw new Exception("Categoria não encontrada");
 
+            categoria.RegistroAtivo = false;
             _repository.Delete(categoria);
         }
 
@@ -50,7 +50,15 @@ namespace BudgetBuddy.Service.Services.ContasBancarias
 
                 dtos.Add(dto);
             }
+
             return dtos;
+            //var quantidadeRegistros = _repository.Count();
+
+            //return new TableDto
+            //{
+            //    QuantidadeRegistros = quantidadeRegistros,
+            //    Dados = categorias
+            //};
         }
 
         public CategoriaContaBancariaTableDto? GetById(int id)

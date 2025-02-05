@@ -1,10 +1,6 @@
-﻿using BudgetBuddy.Domain.Dtos.Transacoes.Forms;
+﻿using BudgetBuddy.Domain.Dtos.Transacoes.Dropdown;
+using BudgetBuddy.Domain.Dtos.Transacoes.Forms;
 using BudgetBuddy.Domain.Dtos.Transacoes.Tables;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BudgetBuddy.Domain.Interfaces
 {
@@ -12,8 +8,10 @@ namespace BudgetBuddy.Domain.Interfaces
     {
         List<SubcategoriaTransacaoTableDto> GetAll();
         SubcategoriaTransacaoTableDto GetById(int id);
+        Task<bool> IsSubcategoriaExistente(string nome, int? idCategoria);
         int Add(SubcategoriaTransacaoFormInsertDto dto);
         void Update(SubcategoriaTransacaoFormUpdateDto dto);
         void Delete(int id);
+        IList<SubcategoriaTransacaoDropdownDto> GetByCategoriaId(int categoriaId);
     }
 }
