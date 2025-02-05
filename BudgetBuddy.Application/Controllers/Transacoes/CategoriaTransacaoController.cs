@@ -1,4 +1,5 @@
 ﻿using BudgetBuddy.Domain.Dtos.Transacoes.Forms;
+using BudgetBuddy.Domain.Entities.Validators;
 using BudgetBuddy.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -49,13 +50,33 @@ namespace BudgetBuddy.Application.Controllers.Transacoes
             }
 
         }
+        
+        [HttpGet("validar-existente")]
+        public async Task<IActionResult> IsCategoriaExistente([FromQuery] string nome)
+        {
+            if (string.IsNullOrEmpty(nome))
+            {
+                return BadRequest("Nome é obrigatório.");
+            }
+
+            var existente = new ValidatorExistente();
+            existente.Existe = await _service.IsCategoriaExistente(nome);
+            return Ok(existente);
+        }
 
         [HttpPost]
         public IActionResult Cadastrar([FromBody] CategoriaTransacaoFormInsertDto dto)
         {
             var id = _service.Add(dto);
-
-            return CreatedAtAction(nameof(Consultar), new { id = id }, dto);
+            var result = new { id = id, nome = dto.Nome };
+            return CreatedAtAction(nameof(Consultar), new { id = id }, result);
+        }
+        
+        [HttpPost("cadastro-rapido")]
+        public IActionResult CadastroRapido([FromBody] CategoriaTransacaoCadastroRapidoFormInsertDto dto)
+        {
+            var categoriaTransacaoCadastroRapidoDto = _service.CadastroRapido(dto);
+            return CreatedAtAction(nameof(Consultar), new { id = categoriaTransacaoCadastroRapidoDto.IdCategoria }, categoriaTransacaoCadastroRapidoDto);
         }
 
         [HttpPatch("{id}")]

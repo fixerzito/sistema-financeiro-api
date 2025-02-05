@@ -5,10 +5,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BudgetBuddy.Infra.Data.Repositories;
 
-public class RepositorioBase<T> : IRepositorioBase<T> where T : EntityBase
+public class RepositorioBase<T> : IRepositorioBase<T>  where T : EntityBase 
 {
-    private readonly BudgetBuddyContext _contexto;
-    private readonly DbSet<T> _dbSet;
+    protected readonly BudgetBuddyContext _contexto;
+    protected readonly DbSet<T> _dbSet;
 
     public RepositorioBase(BudgetBuddyContext contexto)
     {

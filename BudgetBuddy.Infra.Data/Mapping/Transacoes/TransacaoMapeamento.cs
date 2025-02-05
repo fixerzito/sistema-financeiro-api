@@ -1,11 +1,7 @@
 ﻿using BudgetBuddy.Domain.Entities.Transactions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using BudgetBuddy.Domain.Enums;
 
 namespace BudgetBuddy.Infra.Data.Mapping.Transacoes
 {
@@ -54,6 +50,22 @@ namespace BudgetBuddy.Infra.Data.Mapping.Transacoes
               .OnDelete(DeleteBehavior.Restrict)
               .HasForeignKey(x => x.IdSubcategoriaTransacao);
             
+            builder.HasOne(x => x.Usuario) 
+                .WithMany()
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasData(
+            new Transacao{ Id = 150,
+                Nome = "Cooper",
+                TipoTransacao = TipoTransacao.Saida,
+                Status = false,
+                Valor = 250,
+                DataPrevista = new DateTime(2024, 01, 05),
+                RegistroAtivo = true,
+                IdContaBancaria = 158,
+                IdSubcategoriaTransacao = 132,
+            });
+
         }
     }
 }

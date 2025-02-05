@@ -1,4 +1,5 @@
 ﻿using BudgetBuddy.Domain.Entities.BankAccounts;
+using BudgetBuddy.Domain.Entities.Usuarios;
 using BudgetBuddy.Domain.Enums;
 
 namespace BudgetBuddy.Domain.Entities.Transactions
@@ -15,6 +16,7 @@ namespace BudgetBuddy.Domain.Entities.Transactions
         public int IdSubcategoriaTransacao { get; set; } 
         public virtual ContaBancaria ContaBancaria { get; set; }
         public virtual SubcategoriaTransacao SubcategoriaTransacao { get; set; }
+        public Usuario? Usuario { get; set; }
 
     }
 }

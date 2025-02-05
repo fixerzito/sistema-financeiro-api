@@ -2,6 +2,7 @@
 {
     public class TransacaoFormInsertDto
     {
+        public int? Id { get; set; }
         public string Nome { get; set; }
         public decimal Valor { get; set; }
         public bool Status { get; set; }

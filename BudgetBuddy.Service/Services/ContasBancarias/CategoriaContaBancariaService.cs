@@ -1,6 +1,5 @@
 ﻿using BudgetBuddy.Domain.Dtos.ContasBancarias.Forms;
 using BudgetBuddy.Domain.Dtos.ContasBancarias.Tables;
-using BudgetBuddy.Domain.Dtos.Filters;
 using BudgetBuddy.Domain.Entities.BankAccounts;
 using BudgetBuddy.Domain.Interfaces;
 using BudgetBuddy.Infra.Data.Interfaces.ContasBancarias;

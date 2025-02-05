@@ -8,6 +8,7 @@ namespace BudgetBuddy.Domain.Interfaces
     {
         List<SubcategoriaTransacaoTableDto> GetAll();
         SubcategoriaTransacaoTableDto GetById(int id);
+        Task<bool> IsSubcategoriaExistente(string nome, int? idCategoria);
         int Add(SubcategoriaTransacaoFormInsertDto dto);
         void Update(SubcategoriaTransacaoFormUpdateDto dto);
         void Delete(int id);

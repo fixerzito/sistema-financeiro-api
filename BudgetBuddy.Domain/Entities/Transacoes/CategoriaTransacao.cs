@@ -1,7 +1,11 @@
-﻿namespace BudgetBuddy.Domain.Entities.Transactions
+﻿using BudgetBuddy.Domain.Entities.Usuarios;
+
+namespace BudgetBuddy.Domain.Entities.Transactions
 {
     public class CategoriaTransacao : EntityBase
     {
         public string Nome { get; set; }
+        public ICollection<SubcategoriaTransacao> Subcategorias { get; set; }
+        public Usuario? Usuario { get; set; }
     }
 }

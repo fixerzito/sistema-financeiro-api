@@ -1,6 +1,5 @@
 ﻿using BudgetBuddy.Domain.Dtos.ContasBancarias.Forms;
 using BudgetBuddy.Domain.Dtos.ContasBancarias.Tables;
-using BudgetBuddy.Domain.Dtos.Filters;
 
 namespace BudgetBuddy.Domain.Interfaces
 {

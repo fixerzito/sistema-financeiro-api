@@ -1,5 +1,4 @@
 ﻿using BudgetBuddy.Application.ViewModels.Transacoes;
-using BudgetBuddy.Domain.Dtos.CartoesCredito.Forms;
 using BudgetBuddy.Domain.Dtos.Transacoes.Forms;
 using BudgetBuddy.Domain.Enums;
 using BudgetBuddy.Domain.Interfaces;
@@ -21,10 +20,18 @@ namespace BudgetBuddy.Application.Controllers.Transacoes
         }
 
         [HttpGet]
-
         public IActionResult Consultar()
         {
             var dtos = _service.GetAll();
+
+            return Ok(dtos);
+        }
+        
+        [HttpGet]
+        [Route("dropdown")]
+        public IActionResult ConsultarDropdown()
+        {
+            var dtos = _service.GetAllDropdown();
 
             return Ok(dtos);
         }
@@ -42,8 +49,16 @@ namespace BudgetBuddy.Application.Controllers.Transacoes
             return Ok(dto);
         }
 
-        [HttpPost]
-        public IActionResult Cadastrar([FromBody] TransacaoFormInsertDto dto)
+        [HttpPost("despesa")]
+        public IActionResult CadastrarDespesa([FromBody] TransacaoFormInsertDto dto)
+        {
+            var id = _service.Add(dto);
+
+            return CreatedAtAction(nameof(Consultar), new { id = id }, dto);
+        }
+        
+        [HttpPost("receita")]
+        public IActionResult CadastrarReceita([FromBody] TransacaoFormInsertDto dto)
         {
             var id = _service.Add(dto);
 

@@ -21,7 +21,7 @@ namespace BudgetBuddy.Service.Services.Transacoes
             var subcategoria = new SubcategoriaTransacao
             {
                 Nome = dto.Nome,
-                CategoriaTransacaoId = dto.Categoria
+                CategoriaTransacaoId = dto.IdCategoria
             };
 
             _repositorio.Add(subcategoria);
@@ -37,6 +37,11 @@ namespace BudgetBuddy.Service.Services.Transacoes
             }
             subcategoria.RegistroAtivo = false;
             _repositorio.Delete(subcategoria);
+        }
+        
+        public async Task<bool> IsSubcategoriaExistente(string nome, int? idCategoria)
+        {
+            return await _repositorio.IsSubcategoriaExistente(nome, idCategoria);
         }
 
         public IList<SubcategoriaTransacaoDropdownDto> GetByCategoriaId(int categoriaId)

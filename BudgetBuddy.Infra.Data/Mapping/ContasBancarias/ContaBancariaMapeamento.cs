@@ -37,6 +37,10 @@ namespace BudgetBuddy.Infra.Data.Mapping.ContasBancarias
                 .IsRequired()
                 .HasColumnName("data_hora_criacao")
                 .HasDefaultValueSql("GETDATE()");
+            
+            builder.HasOne(x => x.Usuario) 
+                .WithMany()
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasData(
                 new ContaBancaria
@@ -47,7 +51,7 @@ namespace BudgetBuddy.Infra.Data.Mapping.ContasBancarias
                     Icon = "pi pi-wallet",
                     IdCategoria = 100,
                     RegistroAtivo = true,
-                    DataHoraCriacao = DateTime.Now
+                    DataHoraCriacao = new DateTime(2024, 01, 01)
                 },
                 new ContaBancaria
                 {
@@ -57,7 +61,7 @@ namespace BudgetBuddy.Infra.Data.Mapping.ContasBancarias
                     Icon = "pi pi-money-bill",
                     IdCategoria = 101,
                     RegistroAtivo = true,
-                    DataHoraCriacao = DateTime.Now
+                    DataHoraCriacao = new DateTime(2024, 01, 01)
                 },
                 new ContaBancaria
                 {
@@ -67,7 +71,7 @@ namespace BudgetBuddy.Infra.Data.Mapping.ContasBancarias
                     Icon = "pi pi-chart-line",
                     IdCategoria = 102,
                     RegistroAtivo = true,
-                    DataHoraCriacao = DateTime.Now
+                    DataHoraCriacao = new DateTime(2024, 01, 01)
                 },
                 new ContaBancaria
                 {
@@ -77,7 +81,7 @@ namespace BudgetBuddy.Infra.Data.Mapping.ContasBancarias
                     Icon = "pi pi-briefcase",
                     IdCategoria = 103,
                     RegistroAtivo = true,
-                    DataHoraCriacao = DateTime.Now
+                    DataHoraCriacao = new DateTime(2024, 01, 01)
                 },
                 new ContaBancaria
                 {
@@ -87,7 +91,7 @@ namespace BudgetBuddy.Infra.Data.Mapping.ContasBancarias
                     Icon = "pi pi-check",
                     IdCategoria = 104,
                     RegistroAtivo = true,
-                    DataHoraCriacao = DateTime.Now
+                    DataHoraCriacao = new DateTime(2024, 01, 01)
                 },
                 new ContaBancaria
                 {
@@ -97,7 +101,7 @@ namespace BudgetBuddy.Infra.Data.Mapping.ContasBancarias
                     Icon = "pi pi-times",
                     IdCategoria = 105,
                     RegistroAtivo = true,
-                    DataHoraCriacao = DateTime.Now
+                    DataHoraCriacao = new DateTime(2024, 01, 01)
                 },
                 new ContaBancaria
                 {
@@ -107,7 +111,7 @@ namespace BudgetBuddy.Infra.Data.Mapping.ContasBancarias
                     Icon = "pi pi-user",
                     IdCategoria = 106,
                     RegistroAtivo = true,
-                    DataHoraCriacao = DateTime.Now
+                    DataHoraCriacao = new DateTime(2024, 01, 01)
                 },
                 new ContaBancaria
                 {
@@ -117,7 +121,7 @@ namespace BudgetBuddy.Infra.Data.Mapping.ContasBancarias
                     Icon = "pi pi-home",
                     IdCategoria = 107,
                     RegistroAtivo = true,
-                    DataHoraCriacao = DateTime.Now
+                    DataHoraCriacao = new DateTime(2024, 01, 01)
                 },
                 new ContaBancaria
                 {
@@ -127,7 +131,7 @@ namespace BudgetBuddy.Infra.Data.Mapping.ContasBancarias
                     Icon = "pi pi-credit-card",
                     IdCategoria = 108,
                     RegistroAtivo = true,
-                    DataHoraCriacao = DateTime.Now
+                    DataHoraCriacao = new DateTime(2024, 01, 01)
                 },
                 new ContaBancaria
                 {
@@ -137,7 +141,7 @@ namespace BudgetBuddy.Infra.Data.Mapping.ContasBancarias
                     Icon = "pi pi-wallet",
                     IdCategoria = 109,
                     RegistroAtivo = true,
-                    DataHoraCriacao = DateTime.Now
+                    DataHoraCriacao = new DateTime(2024, 01, 01)
                 }
             );
         }

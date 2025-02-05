@@ -9,7 +9,11 @@ namespace BudgetBuddy.Infra.Data.Repositories.Transacoes
     {
         public CategoriaTransacaoRepositorio(BudgetBuddyContext contexto) : base(contexto)
         {
-
+        }
+        
+        public async Task<bool> IsCategoriaExistente(string nome)
+        {
+            return await _dbSet.AnyAsync(c => c.Nome == nome);  
         }
     }
 }

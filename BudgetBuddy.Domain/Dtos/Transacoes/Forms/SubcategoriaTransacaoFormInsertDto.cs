@@ -3,6 +3,6 @@
     public class SubcategoriaTransacaoFormInsertDto
     {
         public string Nome { get; set; }
-        public int Categoria { get; set; }
+        public int IdCategoria { get; set; }
     }
 }

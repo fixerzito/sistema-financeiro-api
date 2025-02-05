@@ -1,4 +1,5 @@
 ﻿using BudgetBuddy.Domain.Dtos.Transacoes.Forms;
+using BudgetBuddy.Domain.Dtos.Transacoes.Response;
 using BudgetBuddy.Domain.Dtos.Transacoes.Tables;
 using BudgetBuddy.Domain.Entities.Transactions;
 using BudgetBuddy.Domain.Interfaces;
@@ -26,6 +27,11 @@ namespace BudgetBuddy.Service.Services.Transacoes
             return categoria.Id;
         }
 
+        public async Task<bool> IsCategoriaExistente(string nome)
+        {
+            return await _repositorio.IsCategoriaExistente(nome);
+        }
+
         public void Delete(int id)
         {
             var categoria = _repositorio.GetById(id);
@@ -35,6 +41,30 @@ namespace BudgetBuddy.Service.Services.Transacoes
             }
             categoria.RegistroAtivo = false;
             _repositorio.Delete(categoria);
+        }
+
+        public CategoriaTransacaoCadastroRapidoDto CadastroRapido(CategoriaTransacaoCadastroRapidoFormInsertDto dto)
+        {
+            var subcategoriaTransacao = new SubcategoriaTransacao()
+            {
+                Nome = dto.Subcategoria,
+            };
+            
+            var categoria = new CategoriaTransacao
+            {
+                Nome = dto.Nome,
+                Subcategorias = new List<SubcategoriaTransacao>()
+                {
+                    subcategoriaTransacao
+                }
+            };
+
+            _repositorio.Add(categoria);
+            return new CategoriaTransacaoCadastroRapidoDto()
+            {
+                IdCategoria = categoria.Id,
+                IdSubcategoria = subcategoriaTransacao.Id,
+            };
         }
 
         public List<CategoriaTransacaoTableDto> GetAll()

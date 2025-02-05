@@ -1,10 +1,10 @@
-﻿using BudgetBuddy.Domain.Dtos.Transacoes.Forms;
+﻿using BudgetBuddy.Domain.Dtos.Transacoes.Dropdown;
+using BudgetBuddy.Domain.Dtos.Transacoes.Forms;
 using BudgetBuddy.Domain.Dtos.Transacoes.Tables;
 using BudgetBuddy.Domain.Dtos.Transacoes.Views;
 using BudgetBuddy.Domain.Entities.Transactions;
 using BudgetBuddy.Domain.Enums;
 using BudgetBuddy.Domain.Interfaces;
-using BudgetBuddy.Infra.Data.Interfaces.ContasBancarias;
 using BudgetBuddy.Infra.Data.Interfaces.Transacoes;
 
 namespace BudgetBuddy.Service.Services.Transacoes
@@ -88,6 +88,27 @@ namespace BudgetBuddy.Service.Services.Transacoes
                     ContaBancaria = transacao.ContaBancaria.Nome,
                     SubcategoriaTransacao = transacao.SubcategoriaTransacao.Nome,
                     CategoriaTransacao = transacao.SubcategoriaTransacao.CategoriaTransacao.Nome
+                };
+
+                dtos.Add(dto);
+            }
+
+            return dtos;
+        }
+        
+        public List<TransacaoDropdown> GetAllDropdown()
+        {
+            var transacoes = _repositorio.GetAll();
+            var dtos = new List<TransacaoDropdown>();
+
+            foreach (var transacao in transacoes)
+            {
+                var dto = new TransacaoDropdown
+                {
+                    Id = transacao.Id,
+                    Nome = transacao.Nome,
+                    Valor = transacao.Valor,
+                    Categoria = transacao.SubcategoriaTransacao.CategoriaTransacao.Nome
                 };
 
                 dtos.Add(dto);

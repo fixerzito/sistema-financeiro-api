@@ -1,6 +1,5 @@
 ﻿
 using BudgetBuddy.Domain.Dtos.ContasBancarias.Forms;
-using BudgetBuddy.Domain.Dtos.Filters;
 using BudgetBuddy.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
