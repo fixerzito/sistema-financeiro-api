@@ -1,10 +1,11 @@
-﻿
-using BudgetBuddy.Domain.Dtos.ContasBancarias.Forms;
+﻿using BudgetBuddy.Domain.Dtos.ContasBancarias.Forms;
 using BudgetBuddy.Domain.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BudgetBuddy.Application.Controllers.ContasBancarias
 {
+    [Authorize]
     [Route("api/categorias-contas-bancarias")]
     [ApiController]
     public class CategoriaContaBancariaController : Controller
@@ -16,25 +17,20 @@ namespace BudgetBuddy.Application.Controllers.ContasBancarias
             _service = service;
         }
 
+        // Método assíncrono e com UserId no cabeçalho
         [HttpGet]
-        public IActionResult Consultar()
+        public async Task<IActionResult> Consultar([FromHeader] string userId)
         {
-            var result = _service.GetAll();
-            //var result = await _service.GetAllAsync(filtro);
-
-            //var response = new
-            //{
-            //    Dados = result.Data,
-            //    QuantidadeRegistros = result.TotalRecords
-            //};
+            var result = await _service.GetAllAsync(userId);
 
             return Ok(result);
         }
 
+        // Método assíncrono e com UserId no cabeçalho
         [HttpGet("{id}")]
-        public IActionResult ConsultarPorId(int id)
+        public async Task<IActionResult> ConsultarPorId(int id, [FromHeader] string userId)
         {
-            var dto =_service.GetById(id);
+            var dto = await _service.GetByIdAsync(userId, id);
              
             if (dto is null)
             {
@@ -44,21 +40,23 @@ namespace BudgetBuddy.Application.Controllers.ContasBancarias
             return Ok(dto);
         }
 
+        // Método assíncrono e com UserId no cabeçalho
         [HttpPost]
-        public IActionResult Cadastrar([FromBody] CategoriaContaBancariaFormInsertDto dto)
+        public async Task<IActionResult> Cadastrar([FromBody] CategoriaContaBancariaFormInsertDto dto, [FromHeader] string userId)
         {
-            var id = _service.Add(dto);
+            var id = await _service.AddAsync(userId, dto);
 
-            return CreatedAtAction(nameof(Consultar), new { id = id}, new {id});
+            return CreatedAtAction(nameof(Consultar), new { id = id }, new { id });
         }
 
+        // Método assíncrono e com UserId no cabeçalho
         [HttpDelete("{id}")]
-        public IActionResult Apagar(int id)
+        public async Task<IActionResult> Apagar(int id, [FromHeader] string userId)
         {
             try
             {
-                _service.Delete(id);
-            return NoContent();
+                await _service.DeleteAsync(userId, id);
+                return NoContent();
             }
             catch 
             {
@@ -66,12 +64,13 @@ namespace BudgetBuddy.Application.Controllers.ContasBancarias
             }
         }
 
+        // Método assíncrono e com UserId no cabeçalho
         [HttpPut("{id}")]
-        public IActionResult Atualizar([FromBody] CategoriaContaBancariaFormUpdateDto dto)
+        public async Task<IActionResult> Atualizar(int id, [FromBody] CategoriaContaBancariaFormUpdateDto dto, [FromHeader] string userId)
         {
             try
             {
-                _service.Update(dto);
+                await _service.UpdateAsync(userId, dto);
                 return NoContent();
             }
             catch 

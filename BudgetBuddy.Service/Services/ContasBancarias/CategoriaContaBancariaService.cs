@@ -15,29 +15,30 @@ namespace BudgetBuddy.Service.Services.ContasBancarias
             _repository = repository;
         }
 
-        public int Add(CategoriaContaBancariaFormInsertDto dto)
+        public async Task<int> AddAsync(string userId, CategoriaContaBancariaFormInsertDto dto)
         {
             var categoria = new CategoriaContaBancaria
             {
                 Nome = dto.Nome,
             };
-            _repository.Add(categoria);
+
+            await _repository.AddAsync(userId, categoria);
             return categoria.Id;
         }
 
-        public void Delete(int id)
+        public async Task DeleteAsync(string userId, int id)
         {
-            var categoria = _repository.GetById(id);
+            var categoria = await _repository.GetByIdAsync(userId, id);
             if (categoria is null)
                 throw new Exception("Categoria não encontrada");
 
             categoria.RegistroAtivo = false;
-            _repository.Delete(categoria);
+            await _repository.DeleteAsync(userId, categoria);
         }
 
-        public List<CategoriaContaBancariaTableDto> GetAll()
+        public async Task<List<CategoriaContaBancariaTableDto>> GetAllAsync(string userId)
         {
-            var categorias = _repository.GetAll();
+            var categorias = await _repository.GetAllAsync(userId);
             var dtos = new List<CategoriaContaBancariaTableDto>();
 
             foreach (var categoria in categorias)
@@ -52,18 +53,11 @@ namespace BudgetBuddy.Service.Services.ContasBancarias
             }
 
             return dtos;
-            //var quantidadeRegistros = _repository.Count();
-
-            //return new TableDto
-            //{
-            //    QuantidadeRegistros = quantidadeRegistros,
-            //    Dados = categorias
-            //};
         }
 
-        public CategoriaContaBancariaTableDto? GetById(int id)
+        public async Task<CategoriaContaBancariaTableDto?> GetByIdAsync(string userId, int id)
         {
-            var categoria = _repository.GetById(id);
+            var categoria = await _repository.GetByIdAsync(userId, id);
             if (categoria is null)
                 return null;
 
@@ -74,16 +68,15 @@ namespace BudgetBuddy.Service.Services.ContasBancarias
             };
         }
 
-        public void Update(CategoriaContaBancariaFormUpdateDto dto)
+        public async Task UpdateAsync(string userId, CategoriaContaBancariaFormUpdateDto dto)
         {
-            var categoria = _repository.GetById(dto.Id);
+            var categoria = await _repository.GetByIdAsync(userId, dto.Id);
             if (categoria is null)
                 throw new Exception("Categoria não encontrada");
 
-
             categoria.Nome = dto.Nome;
 
-            _repository.Update(categoria);
+            await _repository.UpdateAsync(userId, categoria);
         }
     }
 }

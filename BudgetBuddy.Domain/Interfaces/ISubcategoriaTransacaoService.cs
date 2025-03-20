@@ -6,12 +6,12 @@ namespace BudgetBuddy.Domain.Interfaces
 {
     public interface ISubcategoriaTransacaoService
     {
-        List<SubcategoriaTransacaoTableDto> GetAll();
-        SubcategoriaTransacaoTableDto GetById(int id);
-        Task<bool> IsSubcategoriaExistente(string nome, int? idCategoria);
-        int Add(SubcategoriaTransacaoFormInsertDto dto);
-        void Update(SubcategoriaTransacaoFormUpdateDto dto);
-        void Delete(int id);
-        IList<SubcategoriaTransacaoDropdownDto> GetByCategoriaId(int categoriaId);
+        Task<List<SubcategoriaTransacaoTableDto>> GetAllAsync(string userId);
+        Task<SubcategoriaTransacaoTableDto> GetByIdAsync(string userId, int id);
+        Task<bool> IsSubcategoriaExistenteAsync(string userId, string nome, int? idCategoria);
+        Task<int> AddAsync(string userId, SubcategoriaTransacaoFormInsertDto dto);
+        Task UpdateAsync(string userId, SubcategoriaTransacaoFormUpdateDto dto);
+        Task DeleteAsync(string userId, int id);
+        Task<IList<SubcategoriaTransacaoDropdownDto>> GetByCategoriaIdAsync(string userId, int categoriaId);
     }
 }

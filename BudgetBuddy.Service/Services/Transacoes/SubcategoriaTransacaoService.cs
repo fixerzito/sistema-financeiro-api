@@ -16,7 +16,7 @@ namespace BudgetBuddy.Service.Services.Transacoes
             _repositorio = repositorio;
         }
 
-        public int Add(SubcategoriaTransacaoFormInsertDto dto)
+        public async Task<int> AddAsync(string userId, SubcategoriaTransacaoFormInsertDto dto)
         {
             var subcategoria = new SubcategoriaTransacao
             {
@@ -24,29 +24,29 @@ namespace BudgetBuddy.Service.Services.Transacoes
                 CategoriaTransacaoId = dto.IdCategoria
             };
 
-            _repositorio.Add(subcategoria);
+            await _repositorio.AddAsync(userId, subcategoria);
             return subcategoria.Id;
         }
 
-        public void Delete(int id)
+        public async Task DeleteAsync(string userId, int id)
         {
-            var subcategoria = _repositorio.GetById(id);
+            var subcategoria = await _repositorio.GetByIdAsync(userId, id);
             if (subcategoria is null)
             {
                 throw new Exception("Subcategoria não encontrada");
             }
             subcategoria.RegistroAtivo = false;
-            _repositorio.Delete(subcategoria);
+            await _repositorio.DeleteAsync(userId, subcategoria);
         }
         
-        public async Task<bool> IsSubcategoriaExistente(string nome, int? idCategoria)
+        public async Task<bool> IsSubcategoriaExistenteAsync(string userId, string nome, int? idCategoria)
         {
-            return await _repositorio.IsSubcategoriaExistente(nome, idCategoria);
+            return await _repositorio.IsSubcategoriaExistenteAsync(nome, idCategoria, userId);
         }
 
-        public IList<SubcategoriaTransacaoDropdownDto> GetByCategoriaId(int categoriaId)
+        public async Task<IList<SubcategoriaTransacaoDropdownDto>> GetByCategoriaIdAsync(string userId, int categoriaId)
         {
-            var subcategorias = _repositorio.GetByCategoriaId(categoriaId);
+            var subcategorias = await _repositorio.GetByCategoriaIdAsync(userId, categoriaId);
             var dtos = new List<SubcategoriaTransacaoDropdownDto>();
 
             foreach (var subcategoria in subcategorias)
@@ -63,9 +63,9 @@ namespace BudgetBuddy.Service.Services.Transacoes
             return dtos;
         }
 
-        public List<SubcategoriaTransacaoTableDto> GetAll()
+        public async Task<List<SubcategoriaTransacaoTableDto>> GetAllAsync(string userId)
         {
-            var subcategorias = _repositorio.GetAll();
+            var subcategorias = await _repositorio.GetAllAsync(userId);
             var dtos = new List<SubcategoriaTransacaoTableDto>();
 
             foreach (var subcategoria in subcategorias)
@@ -83,9 +83,9 @@ namespace BudgetBuddy.Service.Services.Transacoes
             return dtos;
         }
 
-        public SubcategoriaTransacaoTableDto GetById(int id)
+        public async Task<SubcategoriaTransacaoTableDto> GetByIdAsync(string userId, int id)
         {
-            var subcategoria = _repositorio.GetById(id);
+            var subcategoria = await _repositorio.GetByIdAsync(userId, id);
             if (subcategoria is null)
             {
                 return null;
@@ -99,9 +99,9 @@ namespace BudgetBuddy.Service.Services.Transacoes
             };
         }
 
-        public void Update(SubcategoriaTransacaoFormUpdateDto dto)
+        public async Task UpdateAsync(string userId, SubcategoriaTransacaoFormUpdateDto dto)
         {
-            var subcategoria = _repositorio.GetById(dto.Id);
+            var subcategoria = await _repositorio.GetByIdAsync(userId, dto.Id);
             if (subcategoria is null)
             {
                 throw new Exception("Categoria não encontrada");
@@ -109,7 +109,7 @@ namespace BudgetBuddy.Service.Services.Transacoes
 
             subcategoria.Nome = dto.Nome;
             subcategoria.CategoriaTransacaoId = dto.Categoria;
-            _repositorio.Update(subcategoria);
+            await _repositorio.UpdateAsync(userId, subcategoria);
         }
     }
 }

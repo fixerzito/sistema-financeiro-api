@@ -16,40 +16,41 @@ namespace BudgetBuddy.Service.Services.Transacoes
             _repositorio = repositorio;
         }
 
-        public int Add(CategoriaTransacaoFormInsertDto dto)
+        public async Task<int> AddAsync(CategoriaTransacaoFormInsertDto dto, string userId)
         {
             var categoria = new CategoriaTransacao
             {
                 Nome = dto.Nome
             };
 
-            _repositorio.Add(categoria);
+            await _repositorio.AddAsync(userId, categoria);
             return categoria.Id;
         }
 
-        public async Task<bool> IsCategoriaExistente(string nome)
+        public async Task<bool> IsCategoriaExistenteAsync(string userId, string nome)
         {
-            return await _repositorio.IsCategoriaExistente(nome);
+            return await _repositorio.IsCategoriaExistenteAsync(userId, nome);
         }
 
-        public void Delete(int id)
+        public async Task DeleteAsync(int id, string userId)
         {
-            var categoria = _repositorio.GetById(id);
+            var categoria = await _repositorio.GetByIdAsync(userId, id);
             if (categoria is null)
             {
                 throw new Exception("Categoria não encontrada");
             }
+
             categoria.RegistroAtivo = false;
-            _repositorio.Delete(categoria);
+            await _repositorio.DeleteAsync(userId, categoria);
         }
 
-        public CategoriaTransacaoCadastroRapidoDto CadastroRapido(CategoriaTransacaoCadastroRapidoFormInsertDto dto)
+        public async Task<CategoriaTransacaoCadastroRapidoDto> CadastroRapidoAsync(CategoriaTransacaoCadastroRapidoFormInsertDto dto, string userId)
         {
             var subcategoriaTransacao = new SubcategoriaTransacao()
             {
                 Nome = dto.Subcategoria,
             };
-            
+
             var categoria = new CategoriaTransacao
             {
                 Nome = dto.Nome,
@@ -59,7 +60,7 @@ namespace BudgetBuddy.Service.Services.Transacoes
                 }
             };
 
-            _repositorio.Add(categoria);
+            await _repositorio.AddAsync(userId, categoria);
             return new CategoriaTransacaoCadastroRapidoDto()
             {
                 IdCategoria = categoria.Id,
@@ -67,9 +68,9 @@ namespace BudgetBuddy.Service.Services.Transacoes
             };
         }
 
-        public List<CategoriaTransacaoTableDto> GetAll()
+        public async Task<List<CategoriaTransacaoTableDto>> GetAllAsync(string userId)
         {
-            var categorias = _repositorio.GetAll();
+            var categorias = await _repositorio.GetAllAsync(userId);
             var dtos = new List<CategoriaTransacaoTableDto>();
 
             foreach (var categoria in categorias)
@@ -86,31 +87,31 @@ namespace BudgetBuddy.Service.Services.Transacoes
             return dtos;
         }
 
-        public CategoriaTransacaoTableDto GetById(int id)
+        public async Task<CategoriaTransacaoTableDto> GetByIdAsync(string userId, int id)
         {
-                var categoria = _repositorio.GetById(id);
-                if (categoria is null)
-                {
-                    return null;
-                }
+            var categoria = await _repositorio.GetByIdAsync(userId, id);
+            if (categoria is null)
+            {
+                return null;
+            }
 
-                return new CategoriaTransacaoTableDto
-                {
-                    Id = categoria.Id,
-                    Nome = categoria.Nome
-                };
+            return new CategoriaTransacaoTableDto
+            {
+                Id = categoria.Id,
+                Nome = categoria.Nome
+            };
         }
 
-        public void Update(CategoriaTransacaoFormUpdateDto dto)
+        public async Task UpdateAsync(CategoriaTransacaoFormUpdateDto dto, string userId)
         {
-            var categoria = _repositorio.GetById(dto.Id);
+            var categoria = await _repositorio.GetByIdAsync(userId, dto.Id);
             if (categoria is null)
             {
                 throw new Exception("Categoria não encontrada");
             }
 
             categoria.Nome = dto.Nome;
-            _repositorio.Update(categoria);
+            await _repositorio.UpdateAsync(userId, categoria);
         }
     }
 }

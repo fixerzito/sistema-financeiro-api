@@ -15,7 +15,7 @@ namespace BudgetBuddy.Service.Services.CartoesCredito
             _repositorio = repositorio;
         }
 
-        public int Add(CartaoCreditoFormInsertDto dto)
+        public async Task<int> AddAsync(string userId, CartaoCreditoFormInsertDto dto)
         {
             var cartao = new CartaoCredito
             {
@@ -26,24 +26,25 @@ namespace BudgetBuddy.Service.Services.CartoesCredito
                 DiaFechamento = dto.DiaFechamento,
                 DiaVencimento = dto.DiaVencimento,
                 IdContaVinculada = dto.IdContaVinculada,
+                // Aqui você pode adicionar a lógica de atribuição do userId se necessário
             };
-            _repositorio.Add(cartao);
+            await _repositorio.AddAsync(userId, cartao);
             return cartao.Id;
         }
 
-        public void Delete(int id)
+        public async Task DeleteAsync(string userId, int id)
         {
-            var cartao = _repositorio.GetById(id);
+            var cartao = await _repositorio.GetByIdAsync(userId, id);
             if (cartao is null)
                 throw new Exception("Cartão de crédito não encontrado");
 
             cartao.RegistroAtivo = false;
-            _repositorio.Delete(cartao);
+            await _repositorio.DeleteAsync(userId, cartao);
         }
 
-        public List<CartaoCreditoTableDto> GetAll()
+        public async Task<List<CartaoCreditoTableDto>> GetAllAsync(string userId)
         {
-            var cartoes = _repositorio.GetAll();
+            var cartoes = await _repositorio.GetAllAsync(userId);
             var dtos = new List<CartaoCreditoTableDto>();
 
             foreach (var cartao in cartoes)
@@ -65,9 +66,9 @@ namespace BudgetBuddy.Service.Services.CartoesCredito
             return dtos;
         }
 
-        public CartaoCreditoFormUpdateDto? GetById(int id)
+        public async Task<CartaoCreditoFormUpdateDto?> GetByIdAsync(string userId, int id)
         {
-            var cartao = _repositorio.GetById(id);
+            var cartao = await _repositorio.GetByIdAsync(userId, id);
             if (cartao is null)
                 return null;
 
@@ -84,14 +85,12 @@ namespace BudgetBuddy.Service.Services.CartoesCredito
             };
         }
 
-        public void Update(CartaoCreditoFormUpdateDto dto)
+        public async Task UpdateAsync(string userId, CartaoCreditoFormUpdateDto dto)
         {
-            var cartao = _repositorio.GetById(dto.Id);
+            var cartao = await _repositorio.GetByIdAsync(userId, dto.Id);
             if (cartao is null)
                 throw new Exception("Conta bancária não encontrada");
 
-
-            cartao.Id = dto.Id;
             cartao.Nome = dto.Nome;
             cartao.DigBandeira = dto.DigBandeira;
             cartao.Saldo = dto.Saldo;
@@ -100,7 +99,7 @@ namespace BudgetBuddy.Service.Services.CartoesCredito
             cartao.DiaVencimento = dto.DiaVencimento;
             cartao.IdContaVinculada = dto.IdContaVinculada;
 
-            _repositorio.Update(cartao);
+            await _repositorio.UpdateAsync(userId, cartao);
         }
     }
 }

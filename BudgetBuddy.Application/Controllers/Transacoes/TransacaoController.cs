@@ -2,10 +2,12 @@
 using BudgetBuddy.Domain.Dtos.Transacoes.Forms;
 using BudgetBuddy.Domain.Enums;
 using BudgetBuddy.Domain.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BudgetBuddy.Application.Controllers.Transacoes
 {
+    [Authorize]
     [Route("api/transacoes")]
     [ApiController]
     public class TransacaoController : Controller
@@ -19,27 +21,30 @@ namespace BudgetBuddy.Application.Controllers.Transacoes
             _contaBancariaService = contaBancariaService;
         }
 
+        // Método assíncrono e com UserId no cabeçalho
         [HttpGet]
-        public IActionResult Consultar()
+        public async Task<IActionResult> Consultar([FromHeader] string userId)
         {
-            var dtos = _service.GetAll();
+            var dtos = await _service.GetAllAsync(userId);
 
             return Ok(dtos);
         }
-        
+
+        // Método assíncrono e com UserId no cabeçalho
         [HttpGet]
         [Route("dropdown")]
-        public IActionResult ConsultarDropdown()
+        public async Task<IActionResult> ConsultarDropdown([FromHeader] string userId)
         {
-            var dtos = _service.GetAllDropdown();
+            var dtos = await _service.GetAllDropdownAsync(userId);
 
             return Ok(dtos);
         }
 
+        // Método assíncrono e com UserId no cabeçalho
         [HttpGet("{id}")]
-        public IActionResult ConsultarPorId(int id)
+        public async Task<IActionResult> ConsultarPorId(int id, [FromHeader] string userId)
         {
-            var dto = _service.GetById(id);
+            var dto = await _service.GetByIdAsync(userId, id);
 
             if (dto is null)
             {
@@ -49,37 +54,40 @@ namespace BudgetBuddy.Application.Controllers.Transacoes
             return Ok(dto);
         }
 
+        // Método assíncrono e com UserId no cabeçalho
         [HttpPost("despesa")]
-        public IActionResult CadastrarDespesa([FromBody] TransacaoFormInsertDto dto)
+        public async Task<IActionResult> CadastrarDespesa([FromBody] TransacaoFormInsertDto dto, [FromHeader] string userId)
         {
-            var id = _service.Add(dto);
+            var id = await _service.AddAsync(userId, dto);
 
             return CreatedAtAction(nameof(Consultar), new { id = id }, dto);
         }
-        
+
+        // Método assíncrono e com UserId no cabeçalho
         [HttpPost("receita")]
-        public IActionResult CadastrarReceita([FromBody] TransacaoFormInsertDto dto)
+        public async Task<IActionResult> CadastrarReceita([FromBody] TransacaoFormInsertDto dto, [FromHeader] string userId)
         {
-            var id = _service.Add(dto);
+            var id = await _service.AddAsync(userId, dto);
 
             return CreatedAtAction(nameof(Consultar), new { id = id }, dto);
         }
 
+        // Método assíncrono e com UserId no cabeçalho
         [HttpPatch("{id}")]
-        public IActionResult Apagar(int id)
+        public async Task<IActionResult> Apagar(int id, [FromHeader] string userId)
         {
-            var transacaoApagar = _service.GetById(id);
+            var transacaoApagar = await _service.GetByIdAsync(userId, id);
             var variavelAlteracao = -1;
             if (transacaoApagar.TipoTransacao is TipoTransacao.Saida)
             {
                 variavelAlteracao = 1;
             }
             var valorDiferenca = transacaoApagar.Valor * variavelAlteracao;
-            
+
             try
             {
-                _service.Delete(id);
-                _contaBancariaService.UpdateSaldo(transacaoApagar.IdContaBancaria, valorDiferenca);
+                await _service.DeleteAsync(userId, id);
+                await _contaBancariaService.UpdateSaldoAsync(userId, transacaoApagar.IdContaBancaria, valorDiferenca);
                 return NoContent();
             }
             catch
@@ -87,9 +95,10 @@ namespace BudgetBuddy.Application.Controllers.Transacoes
                 return BadRequest();
             }
         }
-        
+
+        // Método assíncrono e com UserId no cabeçalho
         [HttpPut("{id}")]
-        public IActionResult Atualizar([FromRoute] int id, [FromBody] TransacaoFormUpdateViewModel viewModel)
+        public async Task<IActionResult> Atualizar([FromRoute] int id, [FromBody] TransacaoFormUpdateViewModel viewModel, [FromHeader] string userId)
         {
             try
             {
@@ -105,7 +114,7 @@ namespace BudgetBuddy.Application.Controllers.Transacoes
                     Valor = viewModel.Valor.GetValueOrDefault(),
                     Nome = viewModel.Nome!,
                 };
-                _service.Update(dto);
+                await _service.UpdateAsync(userId, dto);
                 return NoContent();
             }
             catch

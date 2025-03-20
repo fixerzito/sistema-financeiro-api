@@ -15,19 +15,25 @@ namespace BudgetBuddy.Infra.Data.Repositories.Transacoes
             _dbSet = _contexto.Set<Transacao>();
         }
 
-        public override IList<Transacao> GetAll()
+        public async Task<IList<Transacao>> GetAllAsync(string userId)
         {
-            return _dbSet.Include(x => x.ContaBancaria)
+            return await _dbSet
+                .Where(x => x.UserId == userId)  // Aqui estamos garantindo que o UserId seja filtrado
+                .Include(x => x.ContaBancaria)
                 .Include(x => x.SubcategoriaTransacao)
                 .ThenInclude(st => st.CategoriaTransacao)
-                .ToList();
+                .ToListAsync();  // Usa ToListAsync para tornar a operação assíncrona
         }
 
-        public override Transacao? GetById(int id)
+
+        public async Task<Transacao?> GetById(string userId, int id)
         {
-            return _dbSet.Include(x => x.SubcategoriaTransacao)
+            return await _dbSet
+                .Where(x => x.UserId == userId && x.Id == id) 
+                .Include(x => x.SubcategoriaTransacao)
                 .ThenInclude(st => st.CategoriaTransacao)
-                .FirstOrDefault(x => x.Id == id);
+                .FirstOrDefaultAsync(); 
         }
+
     }
 }

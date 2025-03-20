@@ -54,17 +54,17 @@ namespace BudgetBuddy.Infra.Data.Mapping.Transacoes
                 .WithMany()
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasData(
-            new Transacao{ Id = 150,
-                Nome = "Cooper",
-                TipoTransacao = TipoTransacao.Saida,
-                Status = false,
-                Valor = 250,
-                DataPrevista = new DateTime(2024, 01, 05),
-                RegistroAtivo = true,
-                IdContaBancaria = 158,
-                IdSubcategoriaTransacao = 132,
-            });
+            // builder.HasData(
+            // new Transacao{ Id = 150,
+            //     Nome = "Cooper",
+            //     TipoTransacao = TipoTransacao.Saida,
+            //     Status = false,
+            //     Valor = 250,
+            //     DataPrevista = new DateTime(2024, 01, 05),
+            //     RegistroAtivo = true,
+            //     IdContaBancaria = 158,
+            //     IdSubcategoriaTransacao = 132,
+            // });
 
         }
     }

@@ -1,8 +1,9 @@
-﻿using BudgetBuddy.Domain.Enums;
+﻿using BudgetBuddy.Domain.Dtos.Usuarios;
+using BudgetBuddy.Domain.Enums;
 
 namespace BudgetBuddy.Domain.Dtos.Transacoes.Views
 {
-    public class TransacaoViewDto
+    public class TransacaoViewDto : User
     {
         public int Id { get; set; }
         public string Nome { get; set; }

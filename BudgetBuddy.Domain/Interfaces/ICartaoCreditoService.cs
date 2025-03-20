@@ -5,10 +5,10 @@ namespace BudgetBuddy.Domain.Interfaces
 {
     public interface ICartaoCreditoService
     {
-        List<CartaoCreditoTableDto> GetAll();
-        CartaoCreditoFormUpdateDto? GetById(int id);
-        int Add(CartaoCreditoFormInsertDto dto);
-        void Update(CartaoCreditoFormUpdateDto dto);
-        void Delete(int id);
+        Task<List<CartaoCreditoTableDto>> GetAllAsync(string userId);
+        Task<CartaoCreditoFormUpdateDto?> GetByIdAsync(string userId, int id);
+        Task<int> AddAsync(string userId, CartaoCreditoFormInsertDto dto);
+        Task UpdateAsync(string userId, CartaoCreditoFormUpdateDto dto);
+        Task DeleteAsync(string userId, int id);
     }
 }

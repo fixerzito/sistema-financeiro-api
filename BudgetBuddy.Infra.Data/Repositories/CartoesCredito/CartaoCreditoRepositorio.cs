@@ -15,9 +15,13 @@ namespace BudgetBuddy.Infra.Data.Repositories.CartoesCredito
             _dbSet = context.Set<CartaoCredito>();
         }
 
-        public override IList<CartaoCredito> GetAll()
+        public async Task<IList<CartaoCredito>> GetAllAsync(string userId)
         {
-            return _dbSet.Include(x => x.ContaBancaria).ToList();
+            return await _dbSet
+                .Where(x => x.UserId == userId)
+                .Include(x => x.ContaBancaria)
+                .ToListAsync();
         }
+
     }
 }

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BudgetBuddy.Infra.Data.Repositories;
 
-public class RepositorioBase<T> : IRepositorioBase<T>  where T : EntityBase 
+public class RepositorioBase<T> : IRepositorioBase<T> where T : EntityBase
 {
     protected readonly BudgetBuddyContext _contexto;
     protected readonly DbSet<T> _dbSet;
@@ -16,33 +16,44 @@ public class RepositorioBase<T> : IRepositorioBase<T>  where T : EntityBase
         _dbSet = _contexto.Set<T>();
     }
 
-    public virtual IList<T> GetAll()
+    public async Task<IList<T>> GetAllAsync(string userId)
     {
-        return _dbSet.ToList();
+        return await _dbSet.Where(x => x.UserId == userId).ToListAsync();
     }
 
-    public virtual T? GetById(int id)
+    public async Task<T?> GetByIdAsync(string userId, int id)
     {
-       return _dbSet.FirstOrDefault(x => x.Id == id);
+        return await _dbSet.FirstOrDefaultAsync(x => x.UserId == userId && x.Id == id);
     }
 
-    public T Add(T entidade)
+    public async Task<T> AddAsync(string userId, T entidade)
     {
-        _dbSet.Add(entidade);
-        _contexto.SaveChanges();
+        entidade.UserId = userId;
+        
+        await _dbSet.AddAsync(entidade);
+        await _contexto.SaveChangesAsync();
+
         return entidade;
     }
 
-    public void Delete(T entidade)
+    public async Task DeleteAsync(string userId, T entidade)
     {
-        entidade.RegistroAtivo = false;
-        _dbSet.Update(entidade);
-        _contexto.SaveChanges();
+        var entidadeExistente = await _dbSet.FirstOrDefaultAsync(x => x.UserId == userId && x.Id == entidade.Id);
+        if (entidadeExistente != null)
+        {
+            entidadeExistente.RegistroAtivo = false;
+            _dbSet.Update(entidadeExistente);
+            await _contexto.SaveChangesAsync();
+        }
     }
 
-    public void Update(T entidade)
+    public async Task UpdateAsync(string userId, T entidade)
     {
-        _dbSet.Update(entidade);
-        _contexto.SaveChanges();
+        var entidadeExistente = await _dbSet.FirstOrDefaultAsync(x => x.UserId == userId && x.Id == entidade.Id);
+        if (entidadeExistente != null)
+        {
+            _dbSet.Update(entidadeExistente);
+            await _contexto.SaveChangesAsync();
+        }
     }
 }

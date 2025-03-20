@@ -15,7 +15,7 @@ namespace BudgetBuddy.Service.Services.ContasBancarias
             _repositorio = repositorio;
         }
 
-        public int Add(ContaBancariaFormInsertDto dto)
+        public async Task<int> AddAsync(string userId, ContaBancariaFormInsertDto dto)
         {
             var conta = new ContaBancaria
             {
@@ -24,23 +24,23 @@ namespace BudgetBuddy.Service.Services.ContasBancarias
                 Icon = dto.Icon,
                 IdCategoria = dto.IdCategoria,
             };
-            _repositorio.Add(conta);
+            await _repositorio.AddAsync(userId, conta);
             return conta.Id;
         }
 
-        public void Delete(int id)
+        public async Task DeleteAsync(string userId, int id)
         {
-            var conta = _repositorio.GetById(id);
+            var conta = await _repositorio.GetByIdAsync(userId, id);
             if (conta is null)
                 throw new Exception("Conta bancária não encontrada");
 
             conta.RegistroAtivo = false;
-            _repositorio.Delete(conta);
+            await _repositorio.DeleteAsync(userId, conta);
         }
 
-        public List<ContaBancariaTableDto> GetAll()
+        public async Task<List<ContaBancariaTableDto>> GetAllAsync(string userId)
         {
-            var contas = _repositorio.GetAll();
+            var contas = await _repositorio.GetAllAsync(userId);
             var dtos = new List<ContaBancariaTableDto>();
 
             foreach (var conta in contas)
@@ -59,9 +59,9 @@ namespace BudgetBuddy.Service.Services.ContasBancarias
             return dtos;
         }
 
-        public ContaBancariaTableDto GetById(int id)
+        public async Task<ContaBancariaTableDto> GetByIdAsync(string userId, int id)
         {
-            var conta = _repositorio.GetById(id);
+            var conta = await _repositorio.GetByIdAsync(userId, id);
             if (conta is null)
                 return null;
 
@@ -75,31 +75,29 @@ namespace BudgetBuddy.Service.Services.ContasBancarias
             };
         }
 
-        public void Update(ContaBancariaFormUpdateDto dto)
+        public async Task UpdateAsync(string userId, ContaBancariaFormUpdateDto dto)
         {
-            var conta = _repositorio.GetById(dto.Id);
+            var conta = await _repositorio.GetByIdAsync(userId, dto.Id);
             if (conta is null)
                 throw new Exception("Conta bancária não encontrada");
 
-
-            conta.Id = dto.Id;
             conta.Nome = dto.Nome;
             conta.Saldo = dto.Saldo;
             conta.Icon = dto.Icon;
             conta.IdCategoria = dto.IdCategoria;
 
-            _repositorio.Update(conta);
+            await _repositorio.UpdateAsync(userId, conta);
         }
         
-        public void UpdateSaldo(int id, decimal valor)
+        public async Task UpdateSaldoAsync(string userId, int id, decimal valor)
         {
-            var conta = _repositorio.GetById(id);
+            var conta = await _repositorio.GetByIdAsync(userId, id);
             if (conta is null)
                 throw new Exception("Conta bancária não encontrada");
                 
             conta.Saldo += valor;
             
-            _repositorio.Update(conta);
+            await _repositorio.UpdateAsync(userId, conta);
         }
     }
 }
