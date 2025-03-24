@@ -7,6 +7,7 @@ using BudgetBuddy.Domain.Dtos.Requests;
 using BudgetBuddy.Domain.Dtos.Response;
 using BudgetBuddy.Domain.Dtos.Usuarios;
 using BudgetBuddy.Domain.Entities.Jwt;
+using BudgetBuddy.Domain.Entities.Usuarios;
 using BudgetBuddy.Domain.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
@@ -16,13 +17,13 @@ namespace BudgetBuddy.Service.Services.Identity;
 
 public class IdentityService : IIdentityService
 {
-    private readonly SignInManager<IdentityUser> _signInManager;
-    private readonly UserManager<IdentityUser> _userManager;
+    private readonly SignInManager<Usuario> _signInManager;
+    private readonly UserManager<Usuario> _userManager;
     private readonly IEmailService _emailService;
     private readonly JwtSettings _jwtSettings;
 
-    public IdentityService(SignInManager<IdentityUser > signInManager,
-                            UserManager<IdentityUser > userManager,
+    public IdentityService(SignInManager<Usuario > signInManager,
+                            UserManager<Usuario > userManager,
                             IOptions<JwtSettings> jwtSettings,
                             IEmailService emailService)
     {
@@ -34,18 +35,18 @@ public class IdentityService : IIdentityService
 
     public async Task<UsuarioCadastroResponse> CadastroInicialAsync(UsuarioCadastroRequest usuarioCadastroRequest)
     {
-        var identityUser = new IdentityUser 
+        var Usuario = new Usuario 
         {
             UserName = usuarioCadastroRequest.Email,
             Email = usuarioCadastroRequest.Email,
             EmailConfirmed = false
         };
         
-        var result = await _userManager.CreateAsync(identityUser);
+        var result = await _userManager.CreateAsync(Usuario);
         
         if (result.Succeeded)
         {
-            await _userManager.SetLockoutEnabledAsync(identityUser, false);
+            await _userManager.SetLockoutEnabledAsync(Usuario, false);
         }
         
         var usuarioCadastroResponse = new UsuarioCadastroResponse(result.Succeeded);
@@ -62,9 +63,9 @@ public class IdentityService : IIdentityService
             return usuarioCadastroResponse;
         }
         
-        var token = WebUtility.UrlEncode(await _userManager.GenerateEmailConfirmationTokenAsync(identityUser));
+        var token = WebUtility.UrlEncode(await _userManager.GenerateEmailConfirmationTokenAsync(Usuario));
         
-        await _emailService.EnviarEmailConfirmacaoAsync(identityUser.Email, token);
+        await _emailService.EnviarEmailConfirmacaoAsync(Usuario.Email, token);
         
         return usuarioCadastroResponse;
     }
@@ -224,7 +225,7 @@ public class IdentityService : IIdentityService
     }
 
 
-    private async Task<IList<Claim>> ObterClaims(IdentityUser user, bool adicionarClaimsUsuario)
+    private async Task<IList<Claim>> ObterClaims(Usuario user, bool adicionarClaimsUsuario)
     {
         var claims = new List<Claim>
         {

@@ -1,5 +1,6 @@
 using System.Text;
 using BudgetBuddy.Domain.Entities.Jwt;
+using BudgetBuddy.Domain.Entities.Usuarios;
 using BudgetBuddy.Domain.Interfaces;
 using BudgetBuddy.Infra.Data.Context;
 using BudgetBuddy.Infra.Data.Interfaces.CartoesCredito;
@@ -86,7 +87,7 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.User.RequireUniqueEmail = true;
 });
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+builder.Services.AddIdentity<Usuario, IdentityRole>(options =>
     {
         options.SignIn.RequireConfirmedAccount = false;
     })

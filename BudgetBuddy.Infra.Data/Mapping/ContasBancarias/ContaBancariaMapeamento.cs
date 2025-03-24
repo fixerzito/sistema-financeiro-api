@@ -25,7 +25,8 @@ namespace BudgetBuddy.Infra.Data.Mapping.ContasBancarias
 
             builder.HasOne<CategoriaContaBancaria>()
                 .WithMany()
-                .HasForeignKey(contaBancaria => contaBancaria.IdCategoria);
+                .HasForeignKey(contaBancaria => contaBancaria.IdCategoria)
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.Property(contaBancaria => contaBancaria.RegistroAtivo)
                 .IsRequired()
@@ -38,9 +39,10 @@ namespace BudgetBuddy.Infra.Data.Mapping.ContasBancarias
                 .HasColumnName("data_hora_criacao")
                 .HasDefaultValueSql("GETDATE()");
             
-            builder.HasOne(x => x.Usuario) 
-                .WithMany()
-                .OnDelete(DeleteBehavior.Restrict);
+            builder.HasOne(x => x.Usuario)
+                .WithMany(u => u.ContasBancarias)
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             // builder.HasData(
             //     new ContaBancaria

@@ -6,6 +6,6 @@ namespace BudgetBuddy.Domain.Entities.Transactions
     {
         public string Nome { get; set; }
         public ICollection<SubcategoriaTransacao> Subcategorias { get; set; }
-        public Usuario? Usuario { get; set; }
+        public virtual Usuario Usuario { get; set; }
     }
 }

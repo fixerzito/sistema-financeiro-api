@@ -30,9 +30,10 @@ namespace BudgetBuddy.Infra.Data.Mapping.Transacoes
                 .HasColumnName("data_hora_criacao")
                 .HasDefaultValueSql("GETDATE()");
             
-            builder.HasOne(x => x.Usuario) 
-                .WithMany()
-                .OnDelete(DeleteBehavior.Restrict);
+            builder.HasOne(x => x.Usuario)
+                .WithMany(u => u.CategoriaTransacao)
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             // builder.HasData(
             //     new CategoriaTransacao

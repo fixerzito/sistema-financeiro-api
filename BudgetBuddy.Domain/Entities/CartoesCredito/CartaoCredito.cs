@@ -13,6 +13,6 @@ namespace BudgetBuddy.Domain.Entities.CreditCards
         public int DiaVencimento { get; set; }
         public int? IdContaVinculada { get; set; }
         public virtual ContaBancaria? ContaBancaria { get; set; }
-        public Usuario? Usuario { get; set; }
+        public virtual Usuario Usuario { get; set; }
     }
 }

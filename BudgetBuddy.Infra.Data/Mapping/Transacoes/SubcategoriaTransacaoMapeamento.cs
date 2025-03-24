@@ -31,9 +31,10 @@ namespace BudgetBuddy.Infra.Data.Mapping.Transacoes
                 .HasForeignKey(subcategoria => subcategoria.CategoriaTransacaoId)
                 .OnDelete(DeleteBehavior.Restrict);
             
-            builder.HasOne(x => x.Usuario) 
-                .WithMany()
-                .OnDelete(DeleteBehavior.Restrict);
+            builder.HasOne(x => x.Usuario)
+                .WithMany(u => u.SubcategoriaTransacao)
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
 
         //     builder.HasData(
         //         new SubcategoriaTransacao

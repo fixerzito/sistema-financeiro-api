@@ -41,18 +41,19 @@ namespace BudgetBuddy.Infra.Data.Mapping.Transacoes
                .HasDefaultValue(true);
 
             builder.HasOne(x => x.ContaBancaria)
-              .WithMany()
-              .OnDelete(DeleteBehavior.Restrict)
-              .HasForeignKey(x => x.IdContaBancaria);
+                .WithMany()
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasForeignKey(x => x.IdContaBancaria);
 
             builder.HasOne(x => x.SubcategoriaTransacao)
               .WithMany()
               .OnDelete(DeleteBehavior.Restrict)
               .HasForeignKey(x => x.IdSubcategoriaTransacao);
             
-            builder.HasOne(x => x.Usuario) 
-                .WithMany()
-                .OnDelete(DeleteBehavior.Restrict);
+            builder.HasOne(x => x.Usuario)
+                .WithMany(u => u.Transacoes)
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             // builder.HasData(
             // new Transacao{ Id = 150,
