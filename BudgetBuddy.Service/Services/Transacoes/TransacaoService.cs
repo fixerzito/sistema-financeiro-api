@@ -20,7 +20,7 @@ namespace BudgetBuddy.Service.Services.Transacoes
             _contaBancariaService = contaBancariaService;
         }
 
-        public int Add(TransacaoFormInsertDto dto)
+        public async Task<int> AddAsync(string userId, TransacaoFormInsertDto dto)
         {
             var transacao = new Transacao
             {
@@ -31,50 +31,43 @@ namespace BudgetBuddy.Service.Services.Transacoes
                 DataEfetivacao = dto.DataEfetivacao.HasValue ? dto.DataEfetivacao.Value : (DateTime?)null,
                 TipoTransacao = (TipoTransacao)Enum.ToObject(typeof(TipoTransacao), dto.TipoTransacao),
                 IdContaBancaria = dto.IdContaBancaria,
-                IdSubcategoriaTransacao = dto.IdSubcategoriaTransacao
+                IdSubcategoriaTransacao = dto.IdSubcategoriaTransacao,
+                UserId = userId
             };
             
             if (transacao.Status)
             {
                 if (transacao.TipoTransacao == TipoTransacao.Entrada)
                 {
-                    _contaBancariaService.UpdateSaldo(transacao.IdContaBancaria, transacao.Valor);
+                    _contaBancariaService.UpdateSaldoAsync(userId, transacao.IdContaBancaria, transacao.Valor);
                 }
                 else if(transacao.TipoTransacao == TipoTransacao.Saida)
                 {
-                    _contaBancariaService.UpdateSaldo(transacao.IdContaBancaria, -transacao.Valor); 
+                    _contaBancariaService.UpdateSaldoAsync(userId, transacao.IdContaBancaria, -transacao.Valor); 
                 }
             }
 
-            _repositorio.Add(transacao);
+            await _repositorio.AddAsync(userId, transacao);
             return transacao.Id;
         }
-        
-        public void Delete(int id)
+
+        public async Task DeleteAsync(string userId, int id)
         {
-            var transacao = _repositorio.GetById(id);
+            var transacao = await _repositorio.GetByIdAsync(userId, id);
             if (transacao is null)
                 throw new Exception("Transação não encontrada");
 
-            _repositorio.Delete(transacao);
+            await _repositorio.DeleteAsync(userId, transacao);
         }
 
-        public List<TransacaoTableDto> GetAll()
+        public async Task<List<TransacaoTableDto>> GetAllAsync(string userId)
         {
-            var transacoes = _repositorio.GetAll();
+            var transacoes = await _repositorio.GetAllAsync(userId);
             var dtos = new List<TransacaoTableDto>();
 
             foreach (var transacao in transacoes)
             {
-                var tipoTransacaoString = "";
-                if ((int)transacao.TipoTransacao == 1)
-                {
-                    tipoTransacaoString = "Entrada";
-                }
-                else
-                {
-                    tipoTransacaoString = "Saída";
-                }
+                var tipoTransacaoString = transacao.TipoTransacao == TipoTransacao.Entrada ? "Entrada" : "Saída";
                 
                 var dto = new TransacaoTableDto
                 {
@@ -95,10 +88,10 @@ namespace BudgetBuddy.Service.Services.Transacoes
 
             return dtos;
         }
-        
-        public List<TransacaoDropdown> GetAllDropdown()
+
+        public async Task<List<TransacaoDropdown>> GetAllDropdownAsync(string userId)
         {
-            var transacoes = _repositorio.GetAll();
+            var transacoes = await _repositorio.GetAllAsync(userId);
             var dtos = new List<TransacaoDropdown>();
 
             foreach (var transacao in transacoes)
@@ -117,48 +110,48 @@ namespace BudgetBuddy.Service.Services.Transacoes
             return dtos;
         }
 
-        public TransacaoViewDto? GetById(int id)
+        public async Task<TransacaoViewDto?> GetByIdAsync(string userId, int id)
         {
-            var transacao = _repositorio.GetById(id);
+            var transacao = await _repositorio.GetByIdAsync(userId, id);
             if (transacao is null)
                 return null;
 
-                return new TransacaoViewDto
-                {
-                    Id = transacao.Id,
-                    Nome = transacao.Nome,
-                    Valor = transacao.Valor,
-                    Status = transacao.Status,
-                    DataPrevista = transacao.DataPrevista.HasValue ? transacao.DataPrevista.Value : (DateTime?)null,
-                    DataEfetivacao = transacao.DataEfetivacao.HasValue ? transacao.DataEfetivacao.Value : (DateTime?)null,
-                    TipoTransacao = transacao.TipoTransacao,
-                    IdContaBancaria = transacao.IdContaBancaria,
-                    IdSubcategoriaTransacao = transacao.IdSubcategoriaTransacao,
-                    IdCategoriaTransacao = transacao.SubcategoriaTransacao.CategoriaTransacao.Id
-                };
+            return new TransacaoViewDto
+            {
+                Id = transacao.Id,
+                Nome = transacao.Nome,
+                Valor = transacao.Valor,
+                Status = transacao.Status,
+                DataPrevista = transacao.DataPrevista.HasValue ? transacao.DataPrevista.Value : (DateTime?)null,
+                DataEfetivacao = transacao.DataEfetivacao.HasValue ? transacao.DataEfetivacao.Value : (DateTime?)null,
+                TipoTransacao = transacao.TipoTransacao,
+                IdContaBancaria = transacao.IdContaBancaria,
+                IdSubcategoriaTransacao = transacao.IdSubcategoriaTransacao,
+                IdCategoriaTransacao = transacao.SubcategoriaTransacao.CategoriaTransacao.Id
+            };
         }
 
-        public void Update(TransacaoFormUpdateDto dto)
+        public async Task UpdateAsync(string userId, TransacaoFormUpdateDto dto)
         {
-            var transacao = _repositorio.GetById(dto.Id);
+            var transacao = await _repositorio.GetByIdAsync(userId, dto.Id);
             if (transacao is null)
                 throw new Exception("Transação não encontrada");
-            
+
             if (dto.Status != transacao.Status)
             {
                 if (transacao.TipoTransacao == TipoTransacao.Entrada)
                 {
                     if(dto.Status)
-                        _contaBancariaService.UpdateSaldo(dto.IdContaBancaria, dto.Valor);
+                        _contaBancariaService.UpdateSaldoAsync(userId, dto.IdContaBancaria, dto.Valor);
                     else
-                        _contaBancariaService.UpdateSaldo(transacao.IdContaBancaria, -transacao.Valor);
+                        _contaBancariaService.UpdateSaldoAsync(userId, transacao.IdContaBancaria, -transacao.Valor);
                 }
                 else if(transacao.TipoTransacao == TipoTransacao.Saida)
                 {
                     if(dto.Status)
-                        _contaBancariaService.UpdateSaldo(dto.IdContaBancaria, -dto.Valor);
+                        _contaBancariaService.UpdateSaldoAsync(userId, dto.IdContaBancaria, -dto.Valor);
                     else
-                        _contaBancariaService.UpdateSaldo(transacao.IdContaBancaria, transacao.Valor);
+                        _contaBancariaService.UpdateSaldoAsync(userId, transacao.IdContaBancaria, transacao.Valor);
                 }
             }
 
@@ -175,14 +168,13 @@ namespace BudgetBuddy.Service.Services.Transacoes
             transacao.TipoTransacao = (TipoTransacao)Enum.ToObject(typeof(TipoTransacao), dto.TipoTransacao);
             transacao.IdSubcategoriaTransacao = dto.IdSubcategoriaTransacao;
             transacao.IdContaBancaria = dto.IdContaBancaria;
-            
-            _repositorio.Update(transacao);
+
+            await _repositorio.UpdateAsync(userId, transacao);
         }
 
-
-        private void UpdateSaldo(TransacaoFormUpdateDto dto)
+        private async Task UpdateSaldo(TransacaoFormUpdateDto dto)
         {
-            var transacaoExistente = GetById(dto.Id);
+            var transacaoExistente = await GetByIdAsync(dto.UserId, dto.Id);
             
             if (transacaoExistente!.Valor != dto.Valor ||
                 transacaoExistente.TipoTransacao != dto.TipoTransacao ||
@@ -200,16 +192,16 @@ namespace BudgetBuddy.Service.Services.Transacoes
                         valorNovo *= -1;
                     }
                     
-                    _contaBancariaService.UpdateSaldo(transacaoExistente.IdContaBancaria, valorTransacaoExistente);
-                    _contaBancariaService.UpdateSaldo(dto.IdContaBancaria, valorNovo);
+                    _contaBancariaService.UpdateSaldoAsync(dto.UserId, transacaoExistente.IdContaBancaria, valorTransacaoExistente);
+                    _contaBancariaService.UpdateSaldoAsync(dto.UserId, dto.IdContaBancaria, valorNovo);
                 }
                 else
                 {
-                    _contaBancariaService.UpdateSaldo(dto.IdContaBancaria, (decimal)valorDiferenca);
+                    _contaBancariaService.UpdateSaldoAsync(dto.UserId, dto.IdContaBancaria, (decimal)valorDiferenca);
                 }
             }
         }
-        
+
         private double CalcularDiferenca(TransacaoViewDto transacaoEditar, TransacaoFormUpdateDto dto)
         {
             double valorDiferenca = 0.00;
@@ -260,30 +252,9 @@ namespace BudgetBuddy.Service.Services.Transacoes
                         valorDiferenca = -((double)dto.Valor - (double)transacaoEditar.Valor);
                     }
                 }
-            } 
-            else if (transacaoEditar.TipoTransacao != dto.TipoTransacao && transacaoEditar.Valor == dto.Valor)
-            {
-                if (dto.TipoTransacao is TipoTransacao.Entrada)
-                {
-                    valorDiferenca = (double)transacaoEditar.Valor * 2;
-                }
-                else if (dto.TipoTransacao is TipoTransacao.Saida){
-                    valorDiferenca = (double)transacaoEditar.Valor * -2;
-                }
             }
-            else
-            {
-                if (dto.TipoTransacao is TipoTransacao.Entrada)
-                {
-                    valorDiferenca = (double)transacaoEditar.Valor;
-                }
-                else if (dto.TipoTransacao is TipoTransacao.Saida)
-                {
-                    valorDiferenca = -(double)transacaoEditar.Valor;
-                }
-            }
+
             return valorDiferenca;
         }
-        
     }
 }

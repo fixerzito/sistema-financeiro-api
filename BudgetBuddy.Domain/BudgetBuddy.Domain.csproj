@@ -16,14 +16,17 @@
 
   <ItemGroup>
     <Compile Remove="Dtos\Requests\UsuarioCadastroInicialRequest\**" />
+    <Compile Remove="Dtos\Result\**" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Remove="Dtos\Requests\UsuarioCadastroInicialRequest\**" />
+    <EmbeddedResource Remove="Dtos\Result\**" />
   </ItemGroup>
 
   <ItemGroup>
     <None Remove="Dtos\Requests\UsuarioCadastroInicialRequest\**" />
+    <None Remove="Dtos\Result\**" />
   </ItemGroup>
 
   <ItemGroup>

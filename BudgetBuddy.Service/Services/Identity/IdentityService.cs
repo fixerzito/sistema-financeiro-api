@@ -1,80 +1,161 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
-using System.Web;
-using Azure.Core;
+using System.Text;
+using BudgetBuddy.Application.DTO.Login;
 using BudgetBuddy.Domain.Dtos.Requests;
 using BudgetBuddy.Domain.Dtos.Response;
 using BudgetBuddy.Domain.Dtos.Usuarios;
 using BudgetBuddy.Domain.Entities.Jwt;
+using BudgetBuddy.Domain.Entities.Usuarios;
 using BudgetBuddy.Domain.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BudgetBuddy.Service.Services.Identity;
 
 public class IdentityService : IIdentityService
 {
-    private readonly SignInManager<IdentityUser > _signInManager;
-    private readonly UserManager<IdentityUser > _userManager;
+    private readonly SignInManager<Usuario> _signInManager;
+    private readonly UserManager<Usuario> _userManager;
+    private readonly IEmailService _emailService;
     private readonly JwtSettings _jwtSettings;
 
-    public IdentityService(SignInManager<IdentityUser > signInManager,
-                            UserManager<IdentityUser > userManager,
-                            IOptions<JwtSettings> jwtSettings)
+    public IdentityService(SignInManager<Usuario > signInManager,
+                            UserManager<Usuario > userManager,
+                            IOptions<JwtSettings> jwtSettings,
+                            IEmailService emailService)
     {
         _signInManager = signInManager;
         _userManager = userManager;
+        _emailService = emailService;
         _jwtSettings = jwtSettings.Value;
     }
 
-    public async Task<UsuarioCadastroResponse> CadstrarUsuario(UsuarioCadastroRequest usuarioCadastroRequest)
+    public async Task<UsuarioCadastroResponse> CadastroInicialAsync(UsuarioCadastroRequest usuarioCadastroRequest)
     {
-        var identityUser = new IdentityUser 
+        var Usuario = new Usuario 
         {
             UserName = usuarioCadastroRequest.Email,
             Email = usuarioCadastroRequest.Email,
             EmailConfirmed = false
         };
         
-        var result = await _userManager.CreateAsync(identityUser, usuarioCadastroRequest.Senha);
+        var result = await _userManager.CreateAsync(Usuario);
+        
         if (result.Succeeded)
         {
-            await _userManager.SetLockoutEnabledAsync(identityUser, false);
+            await _userManager.SetLockoutEnabledAsync(Usuario, false);
         }
-
+        
         var usuarioCadastroResponse = new UsuarioCadastroResponse(result.Succeeded);
+        
+        if (!result.Succeeded)
+        {
+            usuarioCadastroResponse.AdicionarErro(result.Errors.Select(x => x.Description));
+            return usuarioCadastroResponse;
+        }
 
         if (!result.Succeeded && result.Errors.Count() > 0)
         {
             usuarioCadastroResponse.AdicionarErro(result.Errors.Select(x => x.Description));
+            return usuarioCadastroResponse;
         }
+        
+        var token = WebUtility.UrlEncode(await _userManager.GenerateEmailConfirmationTokenAsync(Usuario));
+        
+        await _emailService.EnviarEmailConfirmacaoAsync(Usuario.Email, token);
         
         return usuarioCadastroResponse;
     }
 
     public async Task<UsuarioLoginResponse> Login(UsuarioLoginRequest usuarioLoginRequest)
     {
-        var result = await _signInManager.PasswordSignInAsync(usuarioLoginRequest.Email, usuarioLoginRequest.Senha, false, true);
-
+        var usuarioLoginResponse = new UsuarioLoginResponse();
+    
+        var user = await _userManager.FindByEmailAsync(usuarioLoginRequest.Email);
+        if (user == null)
+        {
+            usuarioLoginResponse.AdicionarErro("Usuário não encontrado!");
+            return usuarioLoginResponse;
+        }
+    
+        if (await _userManager.IsLockedOutAsync(user))
+        {
+            usuarioLoginResponse.AdicionarErro("Esta conta está bloqueada!");
+            return usuarioLoginResponse;
+        }
+    
+        if (!await _userManager.IsEmailConfirmedAsync(user))
+        {
+            usuarioLoginResponse.AdicionarErro("É necessário confirmar o email antes de fazer login.");
+            return usuarioLoginResponse;
+        }
+    
+        if (!await _userManager.CheckPasswordAsync(user, usuarioLoginRequest.Senha))
+        {
+            usuarioLoginResponse.AdicionarErro("Senha fudeuu!");
+            return usuarioLoginResponse;
+        }
+    
+        var result = await _signInManager.PasswordSignInAsync(user, usuarioLoginRequest.Senha, false, true);
+    
+        if (result.IsNotAllowed)
+            usuarioLoginResponse.AdicionarErro("Esta conta não tem permissão para fazer login!");
+        else if (result.RequiresTwoFactor)
+            usuarioLoginResponse.AdicionarErro("É necessário confirmar o login no seu Email");
+        else
+            usuarioLoginResponse.AdicionarErro("Usuário ou senha incorretos!");
+        
         if (result.Succeeded)
             return await GerarCredenciais(usuarioLoginRequest.Email);
-        
-        var usuarioLoginResponse = new UsuarioLoginResponse();
-        if (!result.Succeeded)
-        {
-            if(result.IsLockedOut)
-                usuarioLoginResponse.AdicionarErro("Esta conta está bloqueada!");
-            else if(result.IsNotAllowed)
-                usuarioLoginResponse.AdicionarErro("Esta conta não tem permissão para fazer login!");
-            
-            else if(result.RequiresTwoFactor)
-                usuarioLoginResponse.AdicionarErro("É necessário confirmar o login no seu Email");
-            else 
-                usuarioLoginResponse.AdicionarErro("Usuário ou senha incorretos!");
-
-        }
-        
+    
         return usuarioLoginResponse;
+    }
+    
+    public async Task<bool> ConfirmarEmailAsync(string token, string email)
+    {
+        var usuario = await _userManager.FindByEmailAsync(email);
+
+        if (usuario == null)
+        {
+            Console.WriteLine($"Erro: Usuário com e-mail {email} não encontrado.");
+            return false;
+        }
+
+        var resultado = await _userManager.ConfirmEmailAsync(usuario, token);
+
+        if (!resultado.Succeeded)
+        {
+            Console.WriteLine($"Erro ao confirmar e-mail: {string.Join(", ", resultado.Errors.Select(e => e.Description))}");
+            return false;
+        }
+
+        Console.WriteLine($"Sucesso: E-mail {email} confirmado.");
+        return true;
+    }
+
+    
+    public async Task<bool> CadastrarSenhaAsync(CadastroSenhaRequest request)
+    {
+        var usuario = await _userManager.FindByEmailAsync(request.Email);
+
+        if (usuario == null)
+            return false;
+
+        if (!usuario.EmailConfirmed)
+            return false;
+
+        var resultado = await _userManager.AddPasswordAsync(usuario, request.Senha);
+
+        if (!resultado.Succeeded)
+        {
+            Console.WriteLine("Senha não deu boa");
+            return false;
+        }
+
+        return true;
     }
 
     public async Task<UsuarioLoginResponse> LoginSemSenha(string usuarioId)
@@ -98,7 +179,7 @@ public class IdentityService : IIdentityService
         var user = await _userManager.FindByEmailAsync(email);
         var response = new UsuarioVerifyResponse
         {
-            EmailCadastrado = email
+            Email = email
         };
         
         response.Ativo = user is not null;
@@ -112,8 +193,8 @@ public class IdentityService : IIdentityService
         var acessTokenClaims = await ObterClaims(user, adicionarClaimsUsuario: true);
         var refreshTokenClaims = await ObterClaims(user, adicionarClaimsUsuario: false);
 
-        var dataExpiracaoAcessToken = DateTime.Now.AddSeconds(_jwtSettings.AccesTokenExpiration);
-        var dataExpiracaoRefreshToken = DateTime.Now.AddSeconds(_jwtSettings.RefreshTokenExpiration);
+        var dataExpiracaoAcessToken = DateTime.UtcNow.AddSeconds(_jwtSettings.AccesTokenExpiration);
+        var dataExpiracaoRefreshToken = DateTime.UtcNow.AddSeconds(_jwtSettings.RefreshTokenExpiration);
 
         var accessToken = GerarToken(acessTokenClaims, dataExpiracaoAcessToken);
         var refreshToken = GerarToken(refreshTokenClaims, dataExpiracaoRefreshToken);
@@ -127,72 +208,48 @@ public class IdentityService : IIdentityService
     
 
     private string GerarToken(IEnumerable<Claim> claims, DateTime dataExpiracao)
-    {   
+    {
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key));
+        var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
         var jwt = new JwtSecurityToken(
             issuer: _jwtSettings.Issuer,
             audience: _jwtSettings.Audience,
             claims: claims,
-            notBefore: dataExpiracao,
+            notBefore: DateTime.UtcNow,
             expires: dataExpiracao,
-            signingCredentials: _jwtSettings.SigningCredentials);
-        
+            signingCredentials: signingCredentials
+        );
+
         return new JwtSecurityTokenHandler().WriteToken(jwt);
     }
 
-    private async Task<IList<Claim>> ObterClaims(IdentityUser  user, bool adicionarClaimsUsuario)
+
+    private async Task<IList<Claim>> ObterClaims(Usuario user, bool adicionarClaimsUsuario)
     {
-        var claims = new List<Claim>();
-        
-        claims.Add(new Claim(JwtRegisteredClaimNames.Sub, user.Id));
-        claims.Add(new Claim(JwtRegisteredClaimNames.Email, user.Email));
-        claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
-        claims.Add(new Claim(JwtRegisteredClaimNames.Nbf, DateTime.Now.ToString()));
-        claims.Add(new Claim(JwtRegisteredClaimNames.Iat, DateTime.Now.ToString()));
+        var claims = new List<Claim>
+        {
+            new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+            new Claim(JwtRegisteredClaimNames.Email, user.Email),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new Claim(JwtRegisteredClaimNames.Nbf, ((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds().ToString()),
+            new Claim(JwtRegisteredClaimNames.Iat, ((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds().ToString())
+
+        };
 
         if (adicionarClaimsUsuario)
         {
             var userClaims = await _userManager.GetClaimsAsync(user);
             var roles = await _userManager.GetRolesAsync(user);
-            
             claims.AddRange(userClaims);
-            
+        
             foreach (var role in roles)
             {
                 claims.Add(new Claim("role", role));
             }
         }
-        
+
         return claims;
     }
-
-
-    // public async Task<UsuarioCadastroResponse> CadastrarUsuarioInicial(UsuarioCadastroInicialRequest request)
-    // {
-    //     var identityUser = new IdentityUser 
-    //     {
-    //         UserName = request.Nome,
-    //         Email = request.Email,
-    //         EmailConfirmed = false, // A conta ainda não está ativa 
-    //         Cpf = request.Cpf,
-    //         DataNascimento = request.DataNascimento
-    //     };
-    //
-    //     var result = await _userManager.CreateAsync(identityUser);
-    //
-    //     if (!result.Succeeded)
-    //     {
-    //         return new UsuarioCadastroResponse(false, result.Errors.Select(e => e.Description));
-    //     }
-    //
-    //     // Gerar token para o usuário definir a senha
-    //     var token = await _userManager.GeneratePasswordResetTokenAsync(identityUser);
-    //
-    //     // Enviar e-mail com link para definir senha (Front-end deve ter um formulário para isso)
-    //     var link = $"https://seuapp.com/definir-senha?token={HttpUtility.UrlEncode(token)}&email={identityUser.Email}";
-    //     await _emailService.EnviarEmailAsync(identityUser.Email, "Defina sua senha",
-    //         $"Clique aqui para definir sua senha: {link}");
-    //
-    //     return new UsuarioCadastroResponse(true);
-    // }
 
 }

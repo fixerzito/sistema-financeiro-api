@@ -12,7 +12,7 @@ public static class AuthenticationSetup
         public static void AddAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
                 var JwtSettingOptions = configuration.GetSection(nameof(JwtSettings));
-                var securityKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(configuration.GetSection("JwtSettings:Key").Value));
+                var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration.GetSection("JwtSettings:Key").Value));
                 
                 services.Configure<JwtSettings>(options =>
                 {

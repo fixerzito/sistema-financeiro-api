@@ -8,12 +8,16 @@ public class UsuarioLoginResponse
     
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string AccessToken { get; set; }
+
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string RefreshToken { get; set; }
+
     public List<string> Erros { get; set; }
-    
-    public UsuarioLoginResponse() =>
+
+    public UsuarioLoginResponse()
+    {
         Erros = new List<string>();
+    }
 
     public UsuarioLoginResponse(bool sucesso, string accessToken, string refreshToken) : this()
     {
@@ -26,5 +30,4 @@ public class UsuarioLoginResponse
     
     public void AdicionarErros(IEnumerable<string> erros) =>
         Erros.AddRange(erros);
-    
 }

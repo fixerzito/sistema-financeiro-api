@@ -4,13 +4,14 @@ using BudgetBuddy.Infra.Data.Mapping.ContasBancarias;
 using BudgetBuddy.Domain.Entities.BankAccounts;
 using BudgetBuddy.Domain.Entities.CreditCards;
 using BudgetBuddy.Domain.Entities.Transactions;
+using BudgetBuddy.Domain.Entities.Usuarios;
 using Microsoft.EntityFrameworkCore;
 using BudgetBuddy.Infra.Data.Mapping.Transacoes;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace BudgetBuddy.Infra.Data.Context
 {
-    public class BudgetBuddyContext : IdentityDbContext
+    public class BudgetBuddyContext : IdentityDbContext<Usuario>
     {
         public BudgetBuddyContext(DbContextOptions<BudgetBuddyContext> options) : base(options) { }
 

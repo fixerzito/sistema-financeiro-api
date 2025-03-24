@@ -27,6 +27,7 @@
 
   <ItemGroup>
     <Compile Remove="Interfaces\Modelos\IModeloRepositorio\**" />
+    <Compile Remove="Repositories\Usuarios\UsuarioRepositorio.cs" />
   </ItemGroup>
 
   <ItemGroup>

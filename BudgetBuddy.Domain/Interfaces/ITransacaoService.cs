@@ -7,11 +7,11 @@ namespace BudgetBuddy.Domain.Interfaces
 {
     public interface ITransacaoService
     {
-        List<TransacaoTableDto> GetAll();
-        List<TransacaoDropdown> GetAllDropdown();
-        TransacaoViewDto? GetById(int id);
-        int Add(TransacaoFormInsertDto dto);
-        void Update(TransacaoFormUpdateDto dto);
-        void Delete(int id);
+        Task<List<TransacaoTableDto>> GetAllAsync(string userId);
+        Task<List<TransacaoDropdown>> GetAllDropdownAsync(string userId);
+        Task<TransacaoViewDto?> GetByIdAsync(string userId, int id);
+        Task<int> AddAsync(string userId, TransacaoFormInsertDto dto);
+        Task UpdateAsync(string userId, TransacaoFormUpdateDto dto);
+        Task DeleteAsync(string userId, int id);
     }
 }

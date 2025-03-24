@@ -11,9 +11,11 @@ namespace BudgetBuddy.Infra.Data.Repositories.Transacoes
         {
         }
         
-        public async Task<bool> IsCategoriaExistente(string nome)
+        public async Task<bool> IsCategoriaExistenteAsync(string userId, string nome)
         {
-            return await _dbSet.AnyAsync(c => c.Nome == nome);  
+            return await _dbSet
+                .Where(x => x.UserId == userId && x.Nome == nome)
+                .AnyAsync(c => c.Nome == nome);  
         }
     }
 }

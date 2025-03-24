@@ -15,33 +15,47 @@ public class UsuarioMapeamento : IEntityTypeConfiguration<Usuario>
             .IsRequired()
             .HasMaxLength(100);
         
-        builder.Property(x => x.Senha)
-            .IsRequired()
-            .HasMaxLength(200);
-        
-        builder.Property(x => x.RefreshToken)
-            .IsRequired()
-            .HasMaxLength(200);
-        
         builder.Property(x => x.Email)
             .IsRequired()
             .HasMaxLength(100);
         
+        builder.Property(x => x.CPF)
+            .IsRequired()
+            .HasMaxLength(14);
+        
+        builder.Property(x => x.DataNascimento)
+            .IsRequired();
+        
+        builder.Property(x => x.RefreshToken)
+            .HasMaxLength(200);
+        
         builder.Property(x => x.Permission)
             .IsRequired()
-            .HasColumnType("string")
+            .HasMaxLength(50)
             .HasDefaultValue("Usuario");
         
-        builder.Property(x => x.RegistroAtivo)
-            .IsRequired()
-            .HasColumnName("registro_ativo")
-            .HasColumnType("BIT")
-            .HasDefaultValue(true);
+        builder.HasMany(x => x.Transacoes)
+            .WithOne(t => t.Usuario)
+            .HasForeignKey(t => t.UserId);
         
-        builder.Property(x => x.DataHoraCriacao)
-            .IsRequired()
-            .HasColumnName("data_hora_criacao")
-            .HasDefaultValueSql("GETDATE()");
-       
+        builder.HasMany(x => x.CategoriaContaBancaria)
+            .WithOne()
+            .HasForeignKey("UserId");
+        
+        builder.HasMany(x => x.ContasBancarias)
+            .WithOne()
+            .HasForeignKey("UserId");
+        
+        builder.HasMany(x => x.CartaoCredito)
+            .WithOne()
+            .HasForeignKey("UserId");
+        
+        builder.HasMany(x => x.CategoriaTransacao)
+            .WithOne()
+            .HasForeignKey("UserId");
+        
+        builder.HasMany(x => x.SubcategoriaTransacao)
+            .WithOne()
+            .HasForeignKey("UserId");
     }
 }
