@@ -3,6 +3,7 @@ using System.Net;
 using System.Security.Claims;
 using System.Text;
 using BudgetBuddy.Application.DTO.Login;
+using BudgetBuddy.Domain.Dtos.Login;
 using BudgetBuddy.Domain.Dtos.Requests;
 using BudgetBuddy.Domain.Dtos.Response;
 using BudgetBuddy.Domain.Dtos.Usuarios;
@@ -37,8 +38,10 @@ public class IdentityService : IIdentityService
     {
         var Usuario = new Usuario 
         {
-            UserName = usuarioCadastroRequest.Email,
+            UserName = usuarioCadastroRequest.Nome,
             Email = usuarioCadastroRequest.Email,
+            CPF = usuarioCadastroRequest.CPF,
+            DataNascimento = usuarioCadastroRequest.DataNascimento,
             EmailConfirmed = false
         };
         
@@ -157,6 +160,53 @@ public class IdentityService : IIdentityService
 
         return true;
     }
+    
+    public async Task<bool> AlterarSenhaAsync(AlterarSenhaRequest request)
+    {
+        var usuario = await _userManager.FindByEmailAsync(request.Email);
+        if (usuario == null)
+            return false;
+
+        var token = await _userManager.GeneratePasswordResetTokenAsync(usuario);
+        var encodedToken = WebUtility.UrlEncode(token);
+
+        await _emailService.EnviarEmailRedefinicaoSenhaAsync(usuario.Email, encodedToken);
+
+        return true;
+    }
+    
+    public async Task<bool> RedefinirSenhaAsync(RedefinirSenhaRequest request)
+    {
+        var usuario = await _userManager.FindByEmailAsync(request.Email);
+        if (usuario == null)
+            return false;
+
+        var resultado = await _userManager.ResetPasswordAsync(usuario, request.Token, request.NovaSenha);
+
+        if (!resultado.Succeeded)
+        {
+            Console.WriteLine($"Erro ao redefinir senha: {string.Join(", ", resultado.Errors.Select(e => e.Description))}");
+            return false;
+        }
+
+        return true;
+    }
+    
+    public async Task<bool> EsqueciSenhaAsync(EsqueciSenhaRequest request)
+    {
+        var usuario = await _userManager.FindByEmailAsync(request.Email);
+        if (usuario == null)
+            return false;
+
+        var token = await _userManager.GeneratePasswordResetTokenAsync(usuario);
+        var encodedToken = WebUtility.UrlEncode(token);
+
+        await _emailService.EnviarEmailRedefinicaoSenhaAsync(usuario.Email, encodedToken);
+
+        return true;
+    }
+
+
 
     public async Task<UsuarioLoginResponse> LoginSemSenha(string usuarioId)
     {
@@ -231,6 +281,9 @@ public class IdentityService : IIdentityService
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.Id),
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
+            new Claim("nome", user.UserName),
+            new Claim("cpf", user.CPF),
+            new Claim("dataNascimento", user.DataNascimento.ToString("dd/MM/yyyy")),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new Claim(JwtRegisteredClaimNames.Nbf, ((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds().ToString()),
             new Claim(JwtRegisteredClaimNames.Iat, ((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds().ToString())

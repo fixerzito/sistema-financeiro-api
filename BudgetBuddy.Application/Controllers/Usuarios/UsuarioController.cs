@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Security.Claims;
 using BudgetBuddy.Application.DTO.Login;
+using BudgetBuddy.Domain.Dtos.Login;
 using BudgetBuddy.Domain.Dtos.Requests;
 using BudgetBuddy.Domain.Dtos.Response;
 using BudgetBuddy.Domain.Dtos.Usuarios;
@@ -108,6 +109,39 @@ public class UsuarioController : Controller
         Console.WriteLine("E-mail confirmado com sucesso.");
         return Ok(new { message = "E-mail confirmado com sucesso." });
     }
+    
+    [AllowAnonymous]
+    [HttpPost("esqueci-senha")]
+    public async Task<IActionResult> EsqueciMinhaSenha([FromBody] EsqueciSenhaRequest request)
+    {
+        var sucesso = await _identityService.EsqueciSenhaAsync(request);
+        if (!sucesso)
+            return BadRequest("Erro ao solicitar redefinição de senha.");
+
+        return Ok (new { message = "E-mail de redefinição de senha enviado."});
+    }
+    
+    [AllowAnonymous]
+    [HttpPost("redefinir-senha")]
+    public async Task<IActionResult> RedefinirSenha([FromBody] RedefinirSenhaRequest request)
+    {
+        var sucesso = await _identityService.RedefinirSenhaAsync(request);
+        if (!sucesso)
+            return BadRequest("Erro ao redefinir senha.");
+        
+        return Ok(new { message = "Senha redefinida com sucesso." });
+    }
+
+    [HttpPost("alterar-senha")]
+    public async Task<IActionResult> AlterarSenha([FromBody] AlterarSenhaRequest request)
+    {
+        var sucesso = await _identityService.AlterarSenhaAsync(request);
+        if (!sucesso)
+            return BadRequest("Erro ao alterar senha.");
+
+        return Ok("Senha alterada com sucesso.");
+    }
+
 
     [AllowAnonymous]
     [HttpPost("cadastrar-senha")]
